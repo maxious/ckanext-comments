@@ -30,4 +30,10 @@ To run the tests you should run the following command in the ckanext-comments di
  
  
  
+## TODO
+
+ * Spam checking via mollom/akismet
+ * Moderation queue
+ * Move all of the logic into the logic layer
+ * Make sure any provided JS makes the right API calls and handles threads properly
  
