@@ -18,16 +18,17 @@ class CommentsPlugin(p.SingletonPlugin):
     def get_helpers(self):
         """
         A dictionary of extra helpers that will be available to provide
-        ga report info to templates.
+        info to templates.
         """
         return {
-        #    'linkfinder_installed': lambda: True,
+            'comments_installed': lambda: True,
         }
 
 
     def before_map(self, map):
         """
-        Make "/data" the homepage.
+        Add the API endpoints, we only want to use APIs. This should really be in
+        logic so accessible through the normal APIs.
         """
         api_controller = 'ckanext.comments.controllers.api:CommentApiController'
         with SubMapper(map, controller=api_controller) as m:
