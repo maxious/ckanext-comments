@@ -1,0 +1,16 @@
+syntax: glob
+# generic
+*.pyc
+*~
+.DS_Store
+ckanext_comments.egg-info/
+pip-log.txt
+cmd.txt
+
+
+# other
+build/*
+tmp/*
+selenium/*
+package/DEBIAN/control
+*.swp
