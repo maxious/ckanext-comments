@@ -40,7 +40,9 @@ class CommentThread(Base):
     comment_on = Column(types.UnicodeText)
     comment_on_id = Column(types.UnicodeText)
 
-    creation_date = Column(types.DateTime, default=datetime.now)
+    creation_date = Column(types.DateTime, default=datetime.datetime.now)
+
+    locked = Column(types.Boolean, default=False)
 
     def __init__(self, **kwargs):
         for k,v in kwargs.items():
@@ -81,7 +83,7 @@ class Comment(Base):
     user_id = Column(types.UnicodeText, ForeignKey(model.User.id), nullable=False)
     comment = Column(types.UnicodeText)
 
-    creation_date = Column(types.DateTime, default=datetime.now)
+    creation_date = Column(types.DateTime, default=datetime.datetime.now)
     approval_status = Column(types.UnicodeText)
 
     moderation_date = Column(types.DateTime)
@@ -91,6 +93,7 @@ class Comment(Base):
     spam_score = Column(types.Integer, default=0)
     spam_checked = Column(types.Integer, default=0)
 
+    state = Column(types.UnicodeText)
 
     def __init__(self, **kwargs):
         for k,v in kwargs.items():
@@ -114,14 +117,6 @@ class Comment(Base):
         return model.Session.query(Comment)\
             .filter(Comment.approval_status==status)\
             .filter(Comment.user==user).count()
-
-    def get_for_thread(cls, thread):
-        """
-        Returns the top-level comments for a particular thread, ordered
-        in reverse date order. The children will be retrieved automatically
-        via the relationship.
-        """
-        pass
 
 def init_tables():
     Base.metadata.create_all(model.meta.engine)

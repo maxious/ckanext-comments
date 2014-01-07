@@ -16,19 +16,10 @@ def comment_show(context, data_dict):
 
     return {}
 
-def thread_show(context, data_dict):
+def moderation_queue_show(context, data_dict):
     model = context['model']
     user = context['user']
 
-    logic.check_access("thread_show", context, data_dict)
+    logic.check_access("moderation_queue_show", context, data_dict)
 
     return {}
-
-def comment_list(context, data_dict):
-    model = context['model']
-    user = context['user']
-
-    logic.check_access("comment_list", context, data_dict)
-
-    return {}
-

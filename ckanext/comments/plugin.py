@@ -30,28 +30,22 @@ class CommentsPlugin(p.SingletonPlugin):
         import ckanext.comments.logic.action as actions
         return {
             "comment_create": actions.create.comment_create,
-            "thread_create": actions.create.thread_create,
             "comment_delete": actions.delete.comment_delete,
-            "thread_delete": actions.delete.thread_delete,
             "comment_show": actions.get.comment_show,
-            "thread_show": actions.get.thread_show,
-            "comment_list": actions.get.comment_list,
             "comment_update": actions.update.comment_update,
-            "thread_update": actions.update.thread_update,
+            "moderation_queue_show": actions.get.moderation_queue_show,
+            "moderation_queue_update": actions.update.moderation_queue_update,
         }
 
     def get_auth_functions(self):
-        import ckanext.comments.logic.action as auths
+        import ckanext.comments.logic.auth as auths
         return {
             "comment_create": auths.create.comment_create,
-            "thread_create": auths.create.thread_create,
             "comment_delete": auths.delete.comment_delete,
-            "thread_delete": auths.delete.thread_delete,
             "comment_show": auths.get.comment_show,
-            "thread_show": auths.get.thread_show,
-            "comment_list": auths.get.comment_list,
             "comment_update": auths.update.comment_update,
-            "thread_update": auths.update.thread_update,
+            "moderation_queue_show": auths.get.moderation_queue_show,
+            "moderation_queue_update": auths.update.moderation_queue_update,
         }
 
     def before_map(self, map):
@@ -59,9 +53,6 @@ class CommentsPlugin(p.SingletonPlugin):
         Add the API endpoints, we only want to use APIs. This should really be in
         logic so accessible through the normal APIs.
         """
-        api_controller = 'ckanext.comments.controllers.api:CommentApiController'
-        with SubMapper(map, controller=api_controller) as m:
-            m.connect('/comments/thread/{object_type}/{object_id}', action='thread')
 
         return map
 

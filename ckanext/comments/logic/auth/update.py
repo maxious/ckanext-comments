@@ -12,10 +12,21 @@ def comment_update(context, data_dict):
     model = context['model']
     user = context['user']
 
-    return {'success': True, 'msg': _('')}
+    # If sysadmin, then yes.
+    if new_authz.is_sysadmin(user):
+        return {'success': True}
 
-def thread_update(context, data_dict):
+    # If owner, then yes in theory but we don't really want people changing
+    # the contents of earlier posts. We should restrict update to not changing
+    # the content itself.
+
+    return {'success': False, 'msg': _('You do not have permission to update this comment')}
+
+def moderation_queue_update(context, data_dict):
     model = context['model']
     user = context['user']
 
-    return {'success': True, 'msg': _('')}
+    # Sysadmins only
+
+    return {'success': False,
+        'msg': _('You do not have permission to update the moderation queue')}

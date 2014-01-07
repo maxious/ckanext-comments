@@ -11,10 +11,9 @@ def comment_delete(context, data_dict):
     model = context['model']
     user = context['user']
 
-    return {'success': True, 'msg': _('')}
+    # If sysadmin.
+    if new_authz.is_sysadmin(user):
+        return {'success': True}
 
-def thread_delete(context, data_dict):
-    model = context['model']
-    user = context['user']
-
-    return {'success': True, 'msg': _('')}
+    return {'success': False,
+        'msg': _('You do not have permission to delete this comment')}

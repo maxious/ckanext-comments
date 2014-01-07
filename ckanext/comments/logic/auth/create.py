@@ -8,13 +8,12 @@ import ckan.lib.helpers as h
 log = logging.getLogger(__name__)
 
 def comment_create(context, data_dict):
-    model = context['model']
     user = context['user']
 
-    return {'success': True, 'msg': _('')}
+    if c.userobj:
+        # If currently logged in
+        return {'success': True }
 
-def thread_create(context, data_dict):
-    model = context['model']
-    user = context['user']
+    # TODO: Once we are able, we should track blocked users.
 
-    return {'success': True, 'msg': _('')}
+    return {'success': False, 'msg': _('You must be logged in to add a comment')}

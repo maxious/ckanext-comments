@@ -15,11 +15,3 @@ def comment_create(context, data_dict):
     logic.check_access("comment_create", context, data_dict)
 
     return {}
-
-def thread_create(context, data_dict):
-    model = context['model']
-    user = context['user']
-
-    logic.check_access("thread_create", context, data_dict)
-
-    return {}

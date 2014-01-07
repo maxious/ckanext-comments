@@ -16,10 +16,10 @@ def comment_update(context, data_dict):
 
     return {}
 
-def thread_update(context, data_dict):
+def moderation_queue_update(context, data_dict):
     model = context['model']
     user = context['user']
 
-    logic.check_access("thread_update", context, data_dict)
+    logic.check_access("moderation_queue_update", context, data_dict)
 
     return {}
