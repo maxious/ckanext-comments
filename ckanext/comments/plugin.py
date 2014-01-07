@@ -33,6 +33,7 @@ class CommentsPlugin(p.SingletonPlugin):
             "comment_delete": actions.delete.comment_delete,
             "comment_show": actions.get.comment_show,
             "comment_update": actions.update.comment_update,
+            "thread_show": actions.get.thread_show,
             "moderation_queue_show": actions.get.moderation_queue_show,
             "moderation_queue_update": actions.update.moderation_queue_update,
         }
@@ -44,6 +45,7 @@ class CommentsPlugin(p.SingletonPlugin):
             "comment_delete": auths.delete.comment_delete,
             "comment_show": auths.get.comment_show,
             "comment_update": auths.update.comment_update,
+            "thread_show": auths.get.thread_show,
             "moderation_queue_show": auths.get.moderation_queue_show,
             "moderation_queue_update": auths.update.moderation_queue_update,
         }

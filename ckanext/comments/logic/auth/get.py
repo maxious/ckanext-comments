@@ -10,6 +10,14 @@ import ckan.lib.helpers as h
 
 log = logging.getLogger(__name__)
 
+
+def thread_show(context, data_dict):
+    model = context['model']
+    user = context['user']
+    return {'success': True}
+
+
+
 def comment_show(context, data_dict):
     model = context['model']
     user = context['user']
