@@ -10,6 +10,8 @@ class CommentsPlugin(p.SingletonPlugin):
     implements(p.IConfigurer, inherit=True)
     implements(p.ITemplateHelpers, inherit=True)
     implements(p.IRoutes, inherit=True)
+    implements(p.IAuthFunctions, inherit=True)
+    implements(p.IActions, inherit=True)
 
     def update_config(self, config):
         toolkit.add_template_directory(config, 'templates')
@@ -24,6 +26,33 @@ class CommentsPlugin(p.SingletonPlugin):
             'comments_installed': lambda: True,
         }
 
+    def get_actions(self):
+        import ckanext.comments.logic.action as actions
+        return {
+            "comment_create": actions.create.comment_create,
+            "thread_create": actions.create.thread_create,
+            "comment_delete": actions.delete.comment_delete,
+            "thread_delete": actions.delete.thread_delete,
+            "comment_show": actions.get.comment_show,
+            "thread_show": actions.get.thread_show,
+            "comment_list": actions.get.comment_list,
+            "comment_update": actions.update.comment_update,
+            "thread_update": actions.update.thread_update,
+        }
+
+    def get_auth_functions(self):
+        import ckanext.comments.logic.action as auths
+        return {
+            "comment_create": auths.create.comment_create,
+            "thread_create": auths.create.thread_create,
+            "comment_delete": auths.delete.comment_delete,
+            "thread_delete": auths.delete.thread_delete,
+            "comment_show": auths.get.comment_show,
+            "thread_show": auths.get.thread_show,
+            "comment_list": auths.get.comment_list,
+            "comment_update": auths.update.comment_update,
+            "thread_update": auths.update.thread_update,
+        }
 
     def before_map(self, map):
         """

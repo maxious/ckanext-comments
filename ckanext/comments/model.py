@@ -30,8 +30,8 @@ def acceptable_comment_on(objtype):
 
 class CommentThread(Base):
     """
-    Represents a thread, or in this particular case a collection of 
-    comments against a CKAN object.  This is the container for the 
+    Represents a thread, or in this particular case a collection of
+    comments against a CKAN object.  This is the container for the
     """
     __tablename__ = 'comment_thread'
 
@@ -48,8 +48,8 @@ class CommentThread(Base):
 
     @classmethod
     def get_or_create(cls, obj, id):
-        """ 
-        Retrieves the thread for the specified object if any exists. If 
+        """
+        Retrieves the thread for the specified object if any exists. If
         no thread currently exists, one is created for that object.
         """
         thread = model.Session.query(cls).\
@@ -73,8 +73,8 @@ class Comment(Base):
     __tablename__ = 'comment'
 
     id = Column(types.UnicodeText, primary_key=True, default=make_uuid)
-    parent_id = Column(types.UnicodeText, ForeignKey('comment.id'))    
-    children = relationship("Comment", lazy="joined", join_depth=10,                
+    parent_id = Column(types.UnicodeText, ForeignKey('comment.id'))
+    children = relationship("Comment", lazy="joined", join_depth=10,
                 backref=backref('parent', remote_side=[id]))
 
     thread_id = Column(types.UnicodeText, ForeignKey('comment_thread.id'), nullable=True)
@@ -84,11 +84,11 @@ class Comment(Base):
     creation_date = Column(types.DateTime, default=datetime.now)
     approval_status = Column(types.UnicodeText)
 
-    moderation_date = Column(types.DateTime)  
-    moderated_by = Column(types.UnicodeText, ForeignKey(model.User.id), nullable=False)    
+    moderation_date = Column(types.DateTime)
+    moderated_by = Column(types.UnicodeText, ForeignKey(model.User.id), nullable=False)
 
-    spam_votes = Column(types.Integer, default=0)    
-    spam_score = Column(types.Integer, default=0)    
+    spam_votes = Column(types.Integer, default=0)
+    spam_score = Column(types.Integer, default=0)
     spam_checked = Column(types.Integer, default=0)
 
 
@@ -101,11 +101,11 @@ class Comment(Base):
         if toolkit.asbool(config.get('ckan.comments.moderation', 'true')):
             self.approval_status = COMMENT_PENDING
         else:
-            # If user wants first comment moderated and the user who wrote this hasn't 
+            # If user wants first comment moderated and the user who wrote this hasn't
             # got another comment, put it into moderation, otherwise approve
             if toolkit.asbool(config.get('ckan.comments.moderation.first_only', 'true')) and \
                   Comment.count_for_user(self.user, COMMENT_APPROVED) == 0:
-                self.approval_status = COMMENT_PENDING                
+                self.approval_status = COMMENT_PENDING
             else:
                 self.approval_status = COMMENT_APPROVED
 
@@ -116,9 +116,9 @@ class Comment(Base):
             .filter(Comment.user==user).count()
 
     def get_for_thread(cls, thread):
-        """ 
-        Returns the top-level comments for a particular thread, ordered 
-        in reverse date order. The children will be retrieved automatically 
+        """
+        Returns the top-level comments for a particular thread, ordered
+        in reverse date order. The children will be retrieved automatically
         via the relationship.
         """
         pass

@@ -14,6 +14,10 @@ from ckan.lib.cli import CkanCommand
 
 class InitDBCommand(CkanCommand):
     """
+    Initialises the database with the required tables
+
+    Connects to the CKAN database and creates the comment
+    and thread tables ready for use.
     """
     summary = __doc__.split('\n')[0]
     usage = __doc__
@@ -24,8 +28,6 @@ class InitDBCommand(CkanCommand):
         super(InitDBCommand, self).__init__(name)
 
     def command(self):
-        """
-        """
         self._load_config()
         log = logging.getLogger(__name__)
 
