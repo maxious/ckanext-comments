@@ -16,8 +16,6 @@ def thread_show(context, data_dict):
     user = context['user']
     return {'success': True}
 
-
-
 def comment_show(context, data_dict):
     model = context['model']
     user = context['user']

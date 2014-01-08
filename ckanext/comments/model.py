@@ -36,17 +36,37 @@ class CommentThread(Base):
     __tablename__ = 'comment_thread'
 
     id = Column(types.UnicodeText, primary_key=True, default=make_uuid)
-
-    comment_on = Column(types.UnicodeText)
-    comment_on_id = Column(types.UnicodeText)
-
+    url = Column(types.UnicodeText)
     creation_date = Column(types.DateTime, default=datetime.datetime.now)
-
     locked = Column(types.Boolean, default=False)
 
     def __init__(self, **kwargs):
         for k,v in kwargs.items():
             setattr(self, k, v)
+
+    @classmethod
+    def clean_url(cls, incoming):
+        """
+        We are only interested in the path, so we will strip out
+        everything else
+        """
+        from urlparse import urlparse
+        parsed = urlparse(incoming)
+        return parsed.path
+
+    @classmethod
+    def from_url(cls, threadurl):
+        u = cls.clean_url(threadurl)
+
+        # Look for CommentThread for that URL or create it.
+        thread = model.Session.query(cls).\
+            filter(cls.url==u).first()
+        if not thread:
+            thread = cls(url=u)
+            model.Session.add(thread)
+            model.Session.commit()
+
+        return thread
 
     @classmethod
     def get_or_create(cls, obj, id):
@@ -65,6 +85,13 @@ class CommentThread(Base):
             model.Session.commit()
         return thread
 
+    def as_dict(self):
+        d = {}
+        d['url'] = self.url
+        d['locked'] = self.locked
+        d['created'] = self.creation_date.isoformat()
+        d['id'] = self.id
+        return d
 
 class Comment(Base):
     """

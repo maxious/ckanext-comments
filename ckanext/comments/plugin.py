@@ -4,7 +4,7 @@ import ckan.plugins as p
 from ckan.config.routing import SubMapper
 from ckan.plugins import implements, toolkit
 
-log = logging.getLogger('ckanext.comments')
+log = logging.getLogger(__name__)
 
 class CommentsPlugin(p.SingletonPlugin):
     implements(p.IConfigurer, inherit=True)
@@ -52,9 +52,8 @@ class CommentsPlugin(p.SingletonPlugin):
 
     def before_map(self, map):
         """
-        Add the API endpoints, we only want to use APIs. This should really be in
-        logic so accessible through the normal APIs.
         """
+
 
         return map
 
