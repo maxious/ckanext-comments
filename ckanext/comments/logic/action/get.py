@@ -13,6 +13,15 @@ log = logging.getLogger(__name__)
 
 
 def thread_show(context, data_dict):
+    """
+    Returns the content of a thread, based on a url. The url
+    parameter MUST be present in the data_dict.
+
+    approved_only (boolean) - Only show approved comments
+    with_deleted (boolean) - Also show deleted comments (requires sysadmin)
+    offset (int) - The number of comments to offset in the threads comment list
+    limit (int) - Total number of comments to return.
+    """
     model = context['model']
     user = context['user']
 
@@ -27,10 +36,29 @@ def thread_show(context, data_dict):
     # Dictize the thread and all the comments within it.
     thread_dict = thread.as_dict()
 
-    # Add the 'threaded' comments in order to the following list.
-    # TODO: Allow call to specify from which comment onwards they want
-    # to retrieve, and how many.
-    thread_dict['comments'] = []
+    # Add the top level comments from the thread in order to the following list.
+    # TODOL We still need to have the comment.as_dict() pull child comments.
+    comments = model.Session.query(comment_model.Comment).\
+        filter(comment_model.Comment.thread_id==thread.id)
+
+    # Add more filters based on whether we want comments of a certain state,
+    # or spam comments etc.
+    if context.get('approved_only') == True:
+        comments = comments.filter(comment_model.Comment.approval_status==comment_model.COMMENT_APPROVED)
+
+    if context.get('with_deleted') != True:
+        # TODO: Restrict to sysadmin
+        comments = comments.filter(comment_model.Comment.state=='active')
+
+    if isinstance(context.get('offset'),int):
+        comments = comments.offset(int(context.get('offset')))
+
+    if isinstance(context.get('limit'), int):
+        comments = comments.limit(int(context.get('limit')))
+
+    thread_dict['comments'] = [
+        c.as_dict() for c in comments.order_by('comment.creation_date desc').all()
+    ]
 
     return thread_dict
 
@@ -47,7 +75,8 @@ def comment_show(context, data_dict):
     data_dict['comment'] = comment
     logic.check_access("comment_show", context, data_dict)
 
-    return {}
+    return comment.as_dict()
+
 
 def moderation_queue_show(context, data_dict):
     model = context['model']

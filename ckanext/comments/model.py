@@ -139,6 +139,20 @@ class Comment(Base):
             else:
                 self.approval_status = COMMENT_APPROVED
 
+    def as_dict(self):
+        """
+        Returns this model as a dictionary, including all child comments (as dicts) if
+        if has any
+        """
+        d = {}
+        d['id'] = self.id
+        d['user_id'] = self.user_id
+        d['content'] = self.comment
+        d['state'] = self.state
+        d['comments'] = [c.as_dict() for c in self.children]
+        return d
+
+
     @classmethod
     def count_for_user(cls, user, status):
         return model.Session.query(Comment)\
