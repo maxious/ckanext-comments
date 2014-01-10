@@ -7,6 +7,7 @@ import ckanext.comments.logic as comment_logic
 import ckan.logic.auth as ckanauth
 import ckan.new_authz as new_authz
 import ckan.lib.helpers as h
+from ckan.lib.base import abort, c
 
 log = logging.getLogger(__name__)
 

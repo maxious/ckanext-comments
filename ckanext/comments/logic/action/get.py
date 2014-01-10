@@ -7,7 +7,7 @@ import ckanext.comments.model as comment_model
 import ckan.new_authz as new_authz
 import ckan.lib.helpers as h
 import ckan.plugins.toolkit as toolkit
-from ckan.lib.base import abort
+from ckan.lib.base import abort, c
 
 log = logging.getLogger(__name__)
 
@@ -25,8 +25,15 @@ def thread_show(context, data_dict):
     model = context['model']
     user = context['user']
 
-    url = logic.get_or_bust(data_dict, 'url')
-    thread = comment_model.CommentThread.from_url(url)
+    url = data_dict.get('url')
+    id =  data_dict.get('id')
+    thread = None
+    if url:
+        thread = comment_model.CommentThread.from_url(url)
+
+    if not thread and id:
+        thread = comment_model.CommentThread.get(id)
+
     if not thread:
         return abort(404)
 
@@ -44,11 +51,16 @@ def thread_show(context, data_dict):
     # Add more filters based on whether we want comments of a certain state,
     # or spam comments etc.
     if context.get('approved_only') == True:
-        comments = comments.filter(comment_model.Comment.approval_status==comment_model.COMMENT_APPROVED)
+        comments = comments.filter(comment_model.Comment.approval_status ==
+                                   comment_model.COMMENT_APPROVED)
 
     if context.get('with_deleted') != True:
         # TODO: Restrict to sysadmin
         comments = comments.filter(comment_model.Comment.state=='active')
+
+    # We only want the top-level comments because sub-comments will be retrieved in the
+    # c.as_dict call.
+    comments = comments.filter(comment_model.Comment.parent_id == None)
 
     if isinstance(context.get('offset'),int):
         comments = comments.offset(int(context.get('offset')))
@@ -57,7 +69,7 @@ def thread_show(context, data_dict):
         comments = comments.limit(int(context.get('limit')))
 
     thread_dict['comments'] = [
-        c.as_dict() for c in comments.order_by('comment.creation_date desc').all()
+        c.as_dict() for c in comments.order_by('comment.creation_date asc').all()
     ]
 
     return thread_dict

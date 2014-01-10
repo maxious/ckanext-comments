@@ -20,7 +20,6 @@ metadata = MetaData()
 
 COMMENT_APPROVED = "approved"
 COMMENT_PENDING = "pending"
-COMMENT_DELETED = "deleted"
 
 def make_uuid():
     return unicode(uuid.uuid4())
@@ -52,6 +51,9 @@ class CommentThread(Base):
         """
         from urlparse import urlparse
         parsed = urlparse(incoming)
+
+        # Perhaps check on acceptable_comment_on()?
+
         return parsed.path
 
     @classmethod
@@ -67,6 +69,10 @@ class CommentThread(Base):
             model.Session.commit()
 
         return thread
+
+    @classmethod
+    def get(cls, id):
+        return model.Session.query(cls).filter(cls.id==id).first()
 
     @classmethod
     def get_or_create(cls, obj, id):
@@ -109,6 +115,7 @@ class Comment(Base):
     thread_id = Column(types.UnicodeText, ForeignKey('comment_thread.id'), nullable=True)
     user_id = Column(types.UnicodeText, ForeignKey(model.User.id), nullable=False)
     comment = Column(types.UnicodeText)
+    comment_formatted = Column(types.UnicodeText)
 
     creation_date = Column(types.DateTime, default=datetime.datetime.now)
     approval_status = Column(types.UnicodeText)
@@ -120,7 +127,7 @@ class Comment(Base):
     spam_score = Column(types.Integer, default=0)
     spam_checked = Column(types.Integer, default=0)
 
-    state = Column(types.UnicodeText)
+    state = Column(types.UnicodeText, default=u'active')
 
     def __init__(self, **kwargs):
         for k,v in kwargs.items():
@@ -139,6 +146,10 @@ class Comment(Base):
             else:
                 self.approval_status = COMMENT_APPROVED
 
+    @classmethod
+    def get(cls, id):
+        return model.Session.query(cls).filter(cls.id==id).first()
+
     def as_dict(self):
         """
         Returns this model as a dictionary, including all child comments (as dicts) if
@@ -148,7 +159,10 @@ class Comment(Base):
         d['id'] = self.id
         d['user_id'] = self.user_id
         d['content'] = self.comment
+        d['formatted_content'] = self.comment_formatted
         d['state'] = self.state
+        d['thread_id'] = self.thread_id
+        d['creation_date'] = self.creation_date.isoformat()
         d['comments'] = [c.as_dict() for c in self.children]
         return d
 
