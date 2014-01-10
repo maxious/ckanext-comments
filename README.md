@@ -14,11 +14,8 @@ ckanext-comments has several configuration options that should be set to allow f
     # Whether comments should be threaded or not (default: false)
     ckan.comments.threaded = true/false
 
-    # Whether comments must be moderated or not (default: true)
-    ckan.comments.moderation = true/false
-
-    # Whether, when moderation is on, only a user's first comment
-    # must be moderated  (default: true)
+    # Whether, only a user's first comment must be moderated  (default: true)
+    # otherwise ALL comments are moderated.
     ckan.comments.moderation.first_only = true/false
     
  
@@ -34,6 +31,6 @@ To run the tests you should run the following command in the ckanext-comments di
 
  * Spam checking via mollom/akismet
  * Moderation queue
- * Move all of the logic into the logic layer
+ * ~~~Move all of the logic into the logic layer~~~ 
  * Make sure any provided JS makes the right API calls and handles threads properly
  
