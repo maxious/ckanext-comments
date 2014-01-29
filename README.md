@@ -26,7 +26,7 @@ ckanext-comments has several configuration options that should be set to allow f
 ## Testing
 To run the tests you should run the following command in the ckanext-comments directory (or use --plugin=comments).
 
-    nosetests
+    nosetests --ckan --reset-db --with-pylons=test-core.ini ckanext.comments
  
  
  
