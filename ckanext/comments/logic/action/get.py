@@ -38,7 +38,7 @@ def thread_show(context, data_dict):
         return abort(404)
 
     data_dict['thread'] = thread
-    logic.check_access("thread_show", context, data_dict)
+    #logic.check_access("thread_show", context, data_dict)
 
     # Dictize the thread and all the comments within it.
     thread_dict = thread.as_dict()

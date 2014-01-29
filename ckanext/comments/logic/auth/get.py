@@ -13,8 +13,6 @@ log = logging.getLogger(__name__)
 
 
 def thread_show(context, data_dict):
-    model = context['model']
-    user = context['user']
     return {'success': True}
 
 def comment_show(context, data_dict):
@@ -25,17 +23,17 @@ def comment_show(context, data_dict):
     if new_authz.is_sysadmin(user):
         return {'success': True}
 
-    # Otherwise this depends on state of the comment. If COMMENT_APPROVED
-    # and state = 'active' then yes, otherwise, no.
-    comment = comment_logic.get_comment(data_dict)
-    if comment.approval_status == comment_model.COMMENT_APPROVED:
-        return {'success': True}
-
     # If not approved, we only expect the author to see it.
     if c.userobj and comment.user == c.userobj:
         return {'success': True}
 
-    return {'success': False, 'msg': _('You do not have permission to view this comment')}
+    # Otherwise this depends on state of the comment. If COMMENT_APPROVED
+    # and state = 'active' then yes, otherwise, no.
+    comment = comment_logic.get_comment(data_dict)
+    if comment.approval_status != comment_model.COMMENT_APPROVED:
+        return {'success': False, 'msg': _('You do not have permission to view this comment')}
+
+    return {'success': True}
 
 def moderation_queue_show(context, data_dict):
     model = context['model']

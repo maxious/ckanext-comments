@@ -166,7 +166,6 @@ class Comment(Base):
         d['comments'] = [c.as_dict() for c in self.children]
         return d
 
-
     @classmethod
     def count_for_user(cls, user, status):
         return model.Session.query(Comment)\
