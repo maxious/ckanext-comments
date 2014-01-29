@@ -21,7 +21,8 @@ setup(
 	zip_safe=False,
 	install_requires=[
 		'requests',
-		'nose'
+		'nose',
+		'nose-timer'
 	],
 	entry_points=\
 	"""

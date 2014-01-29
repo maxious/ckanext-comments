@@ -34,7 +34,7 @@ def comment_create(context, data_dict):
     if not thread_id:
         raise logic.ValidationError("Thread identifier or URL is required")
 
-    # TODO: Clean the comment
+    # Cleanup the comment
     cleaned_comment = util.clean_input(data_dict.get('comment'))
     formatted_comment = util.format_comment(cleaned_comment)
 
@@ -44,6 +44,9 @@ def comment_create(context, data_dict):
                               comment_formatted=formatted_comment)
     cmt.user_id = userobj.id
 
+    # Check if there is a parent ID and that it is valid
+    # TODO, validity in this case includes checking parent is not
+    # deleted.
     prt = data_dict.get('parent_id')
     if prt:
         parent = comment_model.Comment.get(prt)
@@ -72,7 +75,7 @@ def comment_create(context, data_dict):
     model.Session.add(cmt)
     model.Session.commit()
 
-    # Queue for spam checking.
+    # Enueue for spam checking if enabled
 
 
     return cmt.as_dict()
