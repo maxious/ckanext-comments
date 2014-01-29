@@ -9,13 +9,15 @@ from ckan.lib.base import abort, c
 log = logging.getLogger(__name__)
 
 def comment_create(context, data_dict):
+    from ckanext.comments.model import CommentBlockedUser
     user = context['user']
 
-    if c.userobj:
-        # If currently logged in
-        return {'success': True }
+    if not c.userobj:
+        log.debug("User is not logged in")
+        return {'success': False, 'msg': _('You must be logged in to add a comment')}
 
-    log.debug("User is not logged in")
-    # TODO: Once we are able, we should track blocked users.
+    if model.Session.query(CommentBlockedUser)\
+            .filter(CommentBlockedUser.user==c.userobj).count() > 0:
+        return {'success': False, 'msg': _('User is blocked')}
 
-    return {'success': False, 'msg': _('You must be logged in to add a comment')}
+    return {'success': True }

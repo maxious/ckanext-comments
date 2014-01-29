@@ -18,6 +18,9 @@ ckanext-comments has several configuration options that should be set to allow f
     # otherwise ALL comments are moderated.
     ckan.comments.moderation.first_only = true/false
     
+    # Text for comments that have children and are deleted
+    ckan.comments.deleted.text = This comment has been deleted
+    
  
 
 ## Testing

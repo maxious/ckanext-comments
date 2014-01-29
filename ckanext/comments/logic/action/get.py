@@ -44,7 +44,6 @@ def thread_show(context, data_dict):
     thread_dict = thread.as_dict()
 
     # Add the top level comments from the thread in order to the following list.
-    # TODOL We still need to have the comment.as_dict() pull child comments.
     comments = model.Session.query(comment_model.Comment).\
         filter(comment_model.Comment.thread_id==thread.id)
 

@@ -173,6 +173,22 @@ class Comment(Base):
             .filter(Comment.approval_status==status)\
             .filter(Comment.user==user).count()
 
+class CommentBlockedUser(Base):
+    """
+    A blocked user who is not allowed to post anymore because they have
+    previously posted spam.
+    """
+    __tablename__ = 'comment_blocked'
+
+    id = Column(types.UnicodeText, primary_key=True, default=make_uuid)
+    user_id = Column(types.UnicodeText, ForeignKey(model.User.id))
+    blocked_by = Column(types.UnicodeText, ForeignKey(model.User.id))
+    creation_date = Column(types.DateTime, default=datetime.datetime.now)
+
+    def __init__(self, **kwargs):
+        for k,v in kwargs.items():
+            setattr(self, k, v)
+
 def init_tables():
     Base.metadata.create_all(model.meta.engine)
 

@@ -7,6 +7,8 @@ import ckan.new_authz as new_authz
 import ckan.lib.helpers as h
 from ckan.lib.base import abort, c
 
+import ckanext.comments.model as comment_model
+
 log = logging.getLogger(__name__)
 
 def comment_delete(context, data_dict):
@@ -15,4 +17,20 @@ def comment_delete(context, data_dict):
 
     logic.check_access("comment_delete", context, data_dict)
 
-    return {}
+    # Comment should either be set state=='deleted' if no children,
+    # otherwise content should be set to withdrawn text
+    id = logic.get_or_bust(data_dict, 'id')
+    comment = comment_model.Comment.get(id)
+    if not comment:
+        abort(404)
+
+    if comment.children.count() > 0:
+        txt = config.get('ckan.comments.deleted.text', 'This message was deleted')
+        comment.comment = txt
+        comment.comment_formatted = txt
+    else:
+        comment.state == 'deleted'
+
+    model.Session.add(comment)
+
+    return {'success': True}
