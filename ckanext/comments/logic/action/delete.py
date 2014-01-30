@@ -27,7 +27,6 @@ def comment_delete(context, data_dict):
     if len(comment.children) > 0:
         txt = config.get('ckan.comments.deleted.text', 'This message was deleted')
         comment.comment = txt
-        comment.comment_formatted = txt
     else:
         comment.state = 'deleted'
 

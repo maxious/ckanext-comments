@@ -109,7 +109,7 @@ class XMLImport(CkanCommand):
             'username': row[5].text,
             'subject': row[6].text,
             'comment': row[7].text,
-            'timestamp': row[8].text
+            'timestamp': int(row[8].text)
         }
 
         data = self._compose_comment_dict(obj)
@@ -117,9 +117,10 @@ class XMLImport(CkanCommand):
         if user:
             context['user'] = user.name
         else:
+            # TODO: Setup an anonymous user.
             context['user'] = self._find_user('rossjones').name
-            #self.log.error("User not found, ever used CKAN? %s" % obj['username'])
-            #return
+
+        context['creation_date'] = obj['timestamp']
 
         res = None
         try:
@@ -140,7 +141,8 @@ class XMLImport(CkanCommand):
     def _compose_comment_dict(self, data):
         d = {
             'url': '/dataset/%s' % data['dataset_name'],
-            'comment': data['comment']
+            'comment': data['comment'],
+            'subject': data['subject']
         }
         if data['parent'] != 0:
             pid = self._find_parent(data['parent'])

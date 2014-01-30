@@ -7,34 +7,44 @@
   >
 
 
+<py:def function="render_comment(comment, depth=0)">
+<div id="reply-700" class="reply push-${depth} boxed boxed">
+    <a href="/users/${comment['username']}">
+            <img typeof="foaf:Image" src="http://data.gov.uk/sites/default/files/styles/avatar/public/profiles/dgu/themes/custom/dguk/default_images/default_user.png" width="60" height="60" alt=""/>
+    </a>
+    <h3>${comment['subject']}</h3>
+    <span class="submitted">Posted by <a href="/users/${comment['username']}" title="View user profile." class="username" xml:lang="" about="/users/${comment['username']}" typeof="sioc:UserAccount" property="foaf:name" datatype="">${comment['username']}</a> on ${h.render_datetime(comment['creation_date'], with_hours=True)}
+    </span>
+    <div class="reply-body">
+        <div class="field field-name-field-reply-comment field-type-text-long field-label-hidden">
+            <div class="field-items">
+                <div class="field-item even">${Markup(comment.get('content'))}</div>
+            </div>
+        </div>
+    </div>
+      <span class="pull-right flag-wrapper flag-spam-reply flag-spam-reply-700">
+          <a href="" title="" class="btn btn-mini flag flag-action flag-link-toggle" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Flag as offensive</a><span class="flag-throbber">&nbsp;</span>
+        </span>
+       <div class="clearfix"></div>
+      <div class="replies">
+            <py:for each="child in comment['comments']">
+                ${render_comment(child, depth+1)}
+            </py:for>
+      </div>
+</div>
+</py:def>
+
 
 <py:def function="show_comments(url)">
 <py:with vars="comments=h.get_comments_dict(url)['comments']">
     <div id="new-comments-container"><div class="replies-wrapper">
       <a id="comments"></a> <!--Anchor to display nodes' comments.-->
-        <div class="replies">
-        <py:for each="comment in comments">
-            <div id="reply-700" class="reply push-0 boxed boxed">
-            <a href="/users/${comment['username']}">
-                    <img typeof="foaf:Image" src="http://data.gov.uk/sites/default/files/styles/avatar/public/profiles/dgu/themes/custom/dguk/default_images/default_user.png" width="60" height="60" alt=""/>
-            </a>
-            <h3>Provision 2010 Data</h3>
-            <span class="submitted">Posted by <a href="/users/${comment['username']}" title="View user profile." class="username" xml:lang="" about="/users/${comment['username']}" typeof="sioc:UserAccount" property="foaf:name" datatype="">${comment['username']}</a> on Wed, 26/05/2010 - 11:31
-            </span>
-            <div class="reply-body">
-                <div class="field field-name-field-reply-comment field-type-text-long field-label-hidden">
-                    <div class="field-items">
-                        <div class="field-item even">${Markup(comment.get('content'))}</div>
-                    </div>
-                </div>
-            </div>
-              <span class="pull-right flag-wrapper flag-spam-reply flag-spam-reply-700">
-                  <a href="/flag/flag/spam_reply/700?destination=dataset/a419263f-d79a-42be-bdc8-48fa44254a35%3Fcomments_per_page%3D999999&amp;token=fd3fc2baf99827678db19322b33aac3e" title="" class="btn btn-mini flag flag-action flag-link-toggle" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Flag as offensive</a><span class="flag-throbber">&nbsp;</span>
-                </span>
-              <div class="reply-links"></div>
-              </div>
-        </py:for>
-      <div class="replies-links"><a href="/user/login?destination=reply/add/4631/32/0">Login</a> to make a comment</div>  </div>
+
+            <py:for each="comment in comments">
+                ${render_comment(comment)}
+            </py:for>
+            <div class="replies-links"><a href="/user/login?destination=reply/add/4631/32/0">Login</a> to make a comment</div>
+
     </div></div>
 </py:with>
 </py:def>

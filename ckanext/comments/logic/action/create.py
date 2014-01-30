@@ -1,3 +1,4 @@
+import datetime
 import logging
 from pylons import config
 from pylons.i18n import _
@@ -36,15 +37,15 @@ def comment_create(context, data_dict):
 
     # Cleanup the comment
     cleaned_comment = util.clean_input(data_dict.get('comment'))
-    formatted_comment = util.format_comment(cleaned_comment)
 
     # Create the object
     cmt = comment_model.Comment(thread_id=thread_id,
-                              comment=cleaned_comment,
-                              comment_formatted=formatted_comment)
+                              comment=cleaned_comment)
     cmt.user_id = userobj.id
+    cmt.subject = data_dict.get('subject', 'No subject')
 
-    # TODO: timestamp if specified
+    if 'creation_date' in context:
+        cmt.creation_date = datetime.datetime.fromtimestamp(context['creation_date'])
 
     # Check if there is a parent ID and that it is valid
     # TODO, validity in this case includes checking parent is not

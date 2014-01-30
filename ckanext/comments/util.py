@@ -1,15 +1,15 @@
-from lxml.html.clean import Cleaner
+from lxml.html.clean import Cleaner, autolink_html
 
 ALLOWED_TAGS = [
     "a", "em", "strong", "cite", "code", "ul", "ol", "li", "p", "blockquote"
 ]
 
 def clean_input(comment):
+    data = comment
+    if not 'href' in data:
+        data = autolink_html(data, avoid_elements=['a'])
+
     cleaner = Cleaner(add_nofollow=True, allow_tags=ALLOWED_TAGS,
                       remove_unknown_tags=False)
-    return cleaner.clean_html(comment)
-
-def format_comment(comment):
-    # Formats the comment text to be more useful. Currently
-    # does nothing.
-    return comment
+    content = cleaner.clean_html(data).replace('\n', '<br/>')
+    return content
