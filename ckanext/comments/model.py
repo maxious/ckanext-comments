@@ -155,9 +155,15 @@ class Comment(Base):
         Returns this model as a dictionary, including all child comments (as dicts) if
         if has any
         """
+        name = 'anonymous'
+        u = model.User.get(self.user_id)
+        if u :
+            name = u.fullname
+
         d = {}
         d['id'] = self.id
         d['user_id'] = self.user_id
+        d['username'] = name
         d['content'] = self.comment
         d['formatted_content'] = self.comment_formatted
         d['state'] = self.state

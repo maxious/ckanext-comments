@@ -22,8 +22,10 @@ class CommentsPlugin(p.SingletonPlugin):
         A dictionary of extra helpers that will be available to provide
         info to templates.
         """
+        from ckanext.comments.helpers import get_comments_dict
         return {
             'comments_installed': lambda: True,
+            'get_comments_dict': get_comments_dict
         }
 
     def get_actions(self):
