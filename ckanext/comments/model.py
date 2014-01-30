@@ -121,7 +121,7 @@ class Comment(Base):
     approval_status = Column(types.UnicodeText)
 
     moderation_date = Column(types.DateTime)
-    moderated_by = Column(types.UnicodeText, ForeignKey(model.User.id), nullable=False)
+    moderated_by = Column(types.UnicodeText, ForeignKey(model.User.id), nullable=True)
 
     spam_votes = Column(types.Integer, default=0)
     spam_score = Column(types.Integer, default=0)

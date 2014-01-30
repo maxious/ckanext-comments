@@ -32,6 +32,6 @@ setup(
 
         [paste.paster_command]
         initdb = ckanext.comments.command:InitDBCommand
-
+        import = ckanext.comments.command:XMLImport
 	""",
 )

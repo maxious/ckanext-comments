@@ -44,6 +44,8 @@ def comment_create(context, data_dict):
                               comment_formatted=formatted_comment)
     cmt.user_id = userobj.id
 
+    # TODO: timestamp if specified
+
     # Check if there is a parent ID and that it is valid
     # TODO, validity in this case includes checking parent is not
     # deleted.
@@ -76,6 +78,5 @@ def comment_create(context, data_dict):
     model.Session.commit()
 
     # Enueue for spam checking if enabled
-
 
     return cmt.as_dict()

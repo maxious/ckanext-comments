@@ -20,7 +20,7 @@ def comment_create(context, data_dict):
         return {'success': False, 'msg': _('You must be logged in to add a comment')}
 
     if model.Session.query(CommentBlockedUser)\
-            .filter(CommentBlockedUser.user==userobj).count() > 0:
+            .filter(CommentBlockedUser.user_id==userobj.id).count() > 0:
         return {'success': False, 'msg': _('User is blocked')}
 
     return {'success': True }
