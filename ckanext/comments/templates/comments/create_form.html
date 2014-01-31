@@ -9,9 +9,16 @@
 <xi:include href="./util.html" />
 
 
-<div class="panel panel-danger errors" style="display:none;">
+<div class="panel panel-danger errors" py:if="errors">
   <div class="panel-heading">Error</div>
-  <div class="panel-body">There are errors in the form, please correct them before re-submitting.</div>
+  <div class="panel-body">
+    <p>There are errors in the form, please correct them before re-submitting.</p>
+    <ul>
+        <py:for each="k,v in errors.iteritems()">
+          <li>${v}</li>
+        </py:for>
+    </ul>
+  </div>
 </div>
 
 <div py:if="c.parent_dict">

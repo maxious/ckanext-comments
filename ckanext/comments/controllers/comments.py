@@ -12,7 +12,7 @@ from ckanext.dgu.plugins_toolkit import (render, c, request, _,
                                          ObjectNotFound, NotAuthorized,
                                          get_action, check_access)
 from ckan.lib.navl.dictization_functions import DataError, unflatten, validate
-from ckan.logic import tuplize_dict, clean_dict, parse_params, flatten_to_string_key
+from ckan.logic import tuplize_dict, clean_dict, parse_params, flatten_to_string_key, ValidationError
 
 log = logging.getLogger(__name__)
 
@@ -54,22 +54,30 @@ class CommentController(BaseController):
         except:
             abort(403)
 
+        errors = {}
+
         if request.method == 'POST':
             data_dict = clean_dict(unflatten(
                 tuplize_dict(parse_params(request.POST))))
-            data_dict['parent_id'] = c.parent.id if c.parent else None3
+            data_dict['parent_id'] = c.parent.id if c.parent else None
             data_dict['url'] = '/dataset/%s' % c.pkg.name
 
+            success = False
             try:
                 res = get_action('comment_create')(context, data_dict)
+                success = True
+            except ValidationError, ve:
+                errors = ve.error_dict
             except Exception, e:
-                print e
                 abort(403)
 
-            h.redirect_to(str('/dataset/%s#comment_%s' % (c.pkg.name, res['id'])))
+            if success:
+                h.redirect_to(str('/dataset/%s#comment_%s' % (c.pkg.name, res['id'])))
+
+        vars = {'errors': errors}
 
         # TODO: Check if user is in BlockedUsers, if so discard any input
-        c.form = render('comments/create_form.html')
+        c.form = render('comments/create_form.html', extra_vars=vars)
 
         return render('comments/create.html')
 

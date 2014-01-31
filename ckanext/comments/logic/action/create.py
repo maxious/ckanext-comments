@@ -23,7 +23,7 @@ def comment_create(context, data_dict):
 
     # Validate that we have the required fields.
     if not all([data_dict.get('comment')]):
-        raise logic.ValidationError("Comment is required")
+        raise logic.ValidationError("Comment text is required")
 
     thread_id = data_dict.get('thread_id')
     if not thread_id:
