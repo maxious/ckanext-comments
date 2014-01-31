@@ -1,0 +1,44 @@
+<form id="comment-edit" method="post"
+  py:attrs="{'class':'has-errors comment-create-form ckan form-horizontal'} if c.errors else {'class':'comment-create-form ckan form-horizontal'}"
+  xmlns:i18n="http://genshi.edgewall.org/i18n"
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  onsubmit="return validate_feedback()"
+>
+
+<xi:include href="./util.html" />
+
+
+<div class="panel panel-danger errors" style="display:none;">
+  <div class="panel-heading">Error</div>
+  <div class="panel-body">There are errors in the form, please correct them before re-submitting.</div>
+</div>
+
+<div py:if="c.parent_dict">
+    <span class="submitted">Posted by <a href="/users/${c.parent_dict['username']}" title="View user profile." class="username" xml:lang="" about="/users/${c.parent_dict['username']}" typeof="sioc:UserAccount" property="foaf:name" datatype="">${c.parent_dict['username']}</a> on ${h.render_datetime(c.parent_dict['creation_date'], with_hours=True)}
+    </span>
+    <div class="reply-body">
+        <div class="field field-name-field-reply-comment field-type-text-long field-label-hidden">
+            <div class="field-items">
+                <div class="field-item even">${Markup(c.parent_dict.get('content'))}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form class="form" action="" method="POST">
+  <div class="form-controls">
+    <label for="subject">Subject</label>
+    <input type="text" class="form-control" name="subject"/>
+
+    <label for="comment">Comment</label>
+    <textarea name="comment" class="form-control" rows="10"></textarea>
+  </div>
+  <div class="form-actions">
+    <input type="submit" class="btn btn-primary" value="Save"/>
+    <input type="reset" class="btn" value="Reset"/>
+  </div>
+</form>
+
+
+</form>

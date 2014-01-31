@@ -7,8 +7,14 @@
   >
 
 
-<py:def function="render_comment(comment, depth=0)">
+<py:def function="render_comment_reply_button(url, parent_id)">
+    <a py:if="c.userobj" href="${url}/comments/reply/${parent_id}">Reply to this comment</a>
+    <a py:if="not c.userobj" href="/user?destination=${url[1:]}#comments">Login to reply to this comment</a>
+</py:def>
+
+<py:def function="render_comment(comment, depth=0, single=False, url=url)">
 <div id="reply-700" class="reply push-${depth} boxed boxed">
+    <a id="comment_${comment['id']}"></a>
     <a href="/users/${comment['username']}">
             <img typeof="foaf:Image" src="http://data.gov.uk/sites/default/files/styles/avatar/public/profiles/dgu/themes/custom/dguk/default_images/default_user.png" width="60" height="60" alt=""/>
     </a>
@@ -21,14 +27,17 @@
                 <div class="field-item even">${Markup(comment.get('content'))}</div>
             </div>
         </div>
+
+        <div style="border-top: solid 1px #ddd;">
+            ${render_comment_reply_button(url, comment['id'])}
+            <a href="" title="" class="btn btn-mini flag flag-action flag-link-toggle pull-right" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Flag as offensive</a>
+        </div>
     </div>
-      <span class="pull-right flag-wrapper flag-spam-reply flag-spam-reply-700">
-          <a href="" title="" class="btn btn-mini flag flag-action flag-link-toggle" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Flag as offensive</a><span class="flag-throbber">&nbsp;</span>
-        </span>
+
        <div class="clearfix"></div>
-      <div class="replies">
+      <div class="replies" py:if="not single">
             <py:for each="child in comment['comments']">
-                ${render_comment(child, depth+1)}
+                ${render_comment(child, depth+1, url=url)}
             </py:for>
       </div>
 </div>
@@ -41,7 +50,7 @@
       <a id="comments"></a> <!--Anchor to display nodes' comments.-->
 
             <py:for each="comment in comments">
-                ${render_comment(comment)}
+                ${render_comment(comment, url=url)}
             </py:for>
             <div class="replies-links"><a href="/user/login?destination=reply/add/4631/32/0">Login</a> to make a comment</div>
 

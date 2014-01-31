@@ -54,8 +54,14 @@ class CommentsPlugin(p.SingletonPlugin):
 
     def before_map(self, map):
         """
+            /dataset/NAME/comments/reply/PARENT_ID
+            /dataset/NAME/comments/add
         """
-
+        controller = 'ckanext.comments.controllers.comments:CommentController'
+        map.connect('/dataset/{dataset_name}/comments/add',
+                    controller=controller, action='add')
+        map.connect('/dataset/{dataset_name}/comments/reply/{parent_id}',
+                    controller=controller, action='reply')
 
         return map
 

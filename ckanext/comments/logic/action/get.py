@@ -83,8 +83,8 @@ def comment_show(context, data_dict):
     if not comment:
         abort(404)
 
-    data_dict['comment'] = comment
     logic.check_access("comment_show", context, data_dict)
+    data_dict['comment'] = comment
 
     return comment.as_dict()
 
