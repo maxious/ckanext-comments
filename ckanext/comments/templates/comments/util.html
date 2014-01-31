@@ -8,7 +8,7 @@
 
 
 <py:def function="render_comment_reply_button(url, parent_id)">
-    <a py:if="c.userobj" href="${url}/comments/reply/${parent_id}">Reply to this comment</a>
+    <a py:if="c.userobj" href="${url}/comments/reply/${parent_id}" class="btn btn-mini flag flag-action flag-link-toggle">Reply to this comment</a>
     <a py:if="not c.userobj" href="/user?destination=${url[1:]}#comments">Login to reply to this comment</a>
 </py:def>
 
@@ -37,8 +37,8 @@
         </div>
     </div>
 
-       <div class="clearfix"></div>
-      <div class="replies" py:if="not single">
+      <div class="clearfix"></div>
+      <div class="replies" py:if="not single" style="margin-top:10px;">
             <py:for each="child in comment['comments']">
                 ${render_comment(child, depth+1, url=url)}
             </py:for>
@@ -50,17 +50,18 @@
 <py:def function="show_comments(url)">
 <py:with vars="comments=h.get_comments_dict(url)['comments']">
     <div id="new-comments-container">
-    <a href="/user?destination=dataset/${c.pkg.name}/comments/add" class="btn btn-primary btn-mini add-feedback-button pull-right">
+    <a py:if="not c.user" href="/user?destination=dataset/${c.pkg.name}/comments/add" class="btn btn-primary btn-mini add-feedback-button pull-right">
       Login to add a comment »
     </a>
+    <a py:if="c.user" href="/dataset/${c.pkg.name}/comments/add" class="btn btn-primary btn-mini add-feedback-button pull-right">
+      Add a comment »
+    </a>
+    <div class="clearfix"></div>
     <div class="replies-wrapper">
       <a id="comments"></a> <!--Anchor to display nodes' comments.-->
-
-            <py:for each="comment in comments">
-                ${render_comment(comment, url=url)}
-            </py:for>
-            <div class="replies-links"><a href="/user/login?destination=reply/add/4631/32/0">Login</a> to make a comment</div>
-
+        <py:for each="comment in comments">
+            ${render_comment(comment, url=url)}
+        </py:for>
     </div></div>
 </py:with>
 </py:def>
