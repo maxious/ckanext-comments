@@ -88,7 +88,7 @@ class XMLImport(CkanCommand):
             self.log.error("No such file: %s" % self.input)
             sys.exit(1)
 
-        self.site_user_name = config.get('ckan.site_id', 'ckan_site_user')['name']
+        self.site_user_name = config.get('ckan.site_id', 'ckan_site_user')
 
         ctx = {}
 
