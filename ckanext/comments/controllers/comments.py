@@ -36,6 +36,24 @@ class CommentController(BaseController):
 
         return self._add_or_reply(dataset_name)
 
+    def flag(self, dataset_name, id):
+        context = {'model':model,'user': c.user}
+
+        try:
+            c.pkg_dict = get_action('package_show')(context, {'id': dataset_name})
+            c.pkg = context['package']
+        except:
+            abort(403)
+
+        try:
+            get_action('comment_update_moderation')(context, {'id': id})
+        except:
+            abort(403)
+
+        # Flag the package
+        h.flash_notice("Thank you for flagging the comment as inappropriate. It has been marked for moderation.")
+        h.redirect_to(str('/dataset/%s' % (c.pkg.name,)))
+
 
     def _add_or_reply(self, dataset_name):
         """

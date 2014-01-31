@@ -35,6 +35,7 @@ class CommentsPlugin(p.SingletonPlugin):
             "comment_delete": actions.delete.comment_delete,
             "comment_show": actions.get.comment_show,
             "comment_update": actions.update.comment_update,
+            'comment_update_moderation': actions.update.comment_update_moderation,
             "thread_show": actions.get.thread_show,
             "moderation_queue_show": actions.get.moderation_queue_show,
             "moderation_queue_update": actions.update.moderation_queue_update,
@@ -62,7 +63,8 @@ class CommentsPlugin(p.SingletonPlugin):
                     controller=controller, action='add')
         map.connect('/dataset/{dataset_name}/comments/reply/{parent_id}',
                     controller=controller, action='reply')
-
+        map.connect('/dataset/{dataset_name}/comments/flag/{id}',
+                    controller=controller, action='flag')
         return map
 
     def after_map(self, map):

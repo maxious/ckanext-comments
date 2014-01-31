@@ -17,6 +17,13 @@ def comment_update(context, data_dict):
 
     return {}
 
+def comment_update_moderation(context, data_dict):
+    model = context['model']
+    user = context['user']
+
+
+    return {}
+
 def moderation_queue_update(context, data_dict):
     model = context['model']
     user = context['user']

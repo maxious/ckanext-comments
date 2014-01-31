@@ -22,7 +22,7 @@
 </div>
 
 <div py:if="c.parent_dict">
-    <span class="submitted">Posted by <a href="/users/${c.parent_dict['username']}" title="View user profile." class="username" xml:lang="" about="/users/${c.parent_dict['username']}" typeof="sioc:UserAccount" property="foaf:name" datatype="">${c.parent_dict['username']}</a> on ${h.render_datetime(c.parent_dict['creation_date'], with_hours=True)}
+    <span class="submitted">Posted by <a py:if="c.parent_dict['username'] != 'anonymous'" href="/users/${c.parent_dict['username']}" title="View user profile." class="username" xml:lang="" about="/users/${c.parent_dict['username']}" typeof="sioc:UserAccount" property="foaf:name" datatype="">${c.parent_dict['username']}</a><span py:if="c.parent_dict['username'] == 'anonymous'">Anonymous</span> on ${h.render_datetime(c.parent_dict['creation_date'], with_hours=True)}
     </span>
     <div class="reply-body">
         <div class="field field-name-field-reply-comment field-type-text-long field-label-hidden">
@@ -31,6 +31,7 @@
             </div>
         </div>
     </div>
+    <hr/>
 </div>
 
 <form class="form" action="" method="POST">

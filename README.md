@@ -35,5 +35,6 @@ To run the tests you should run the following command in the ckanext-comments di
  * Spam checking via mollom/akismet
  * Moderation queue
  * ~~~Move all of the logic into the logic layer~~~ 
+ * Provide an 'anonymous' user for historical not-logged-in users that goes nowhere.
  * Make sure any provided JS makes the right API calls and handles threads properly
  

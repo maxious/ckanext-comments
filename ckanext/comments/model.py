@@ -160,6 +160,10 @@ class Comment(Base):
         if u :
             name = u.fullname
 
+        # Hack
+        if name == config.get('ckan.site_id', 'ckan_site_user') or not name:
+            name = 'anonymous'
+
         d = {}
         d['id'] = self.id
         d['user_id'] = self.user_id

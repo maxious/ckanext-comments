@@ -88,6 +88,8 @@ class XMLImport(CkanCommand):
             self.log.error("No such file: %s" % self.input)
             sys.exit(1)
 
+        self.site_user_name = config.get('ckan.site_id', 'ckan_site_user')['name']
+
         ctx = {}
 
         from lxml import etree
@@ -118,7 +120,7 @@ class XMLImport(CkanCommand):
             context['user'] = user.name
         else:
             # TODO: Setup an anonymous user.
-            context['user'] = self._find_user('rossjones').name
+            context['user'] = self.site_user_name
 
         context['creation_date'] = obj['timestamp']
 

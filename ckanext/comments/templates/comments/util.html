@@ -15,11 +15,14 @@
 <py:def function="render_comment(comment, depth=0, single=False, url=url)">
 <div id="reply-700" class="reply push-${depth} boxed boxed">
     <a id="comment_${comment['id']}"></a>
-    <a href="/users/${comment['username']}">
+    <a py:if="comment['username'] != 'anonymous'" href="/users/${comment['username']}">
             <img typeof="foaf:Image" src="http://data.gov.uk/sites/default/files/styles/avatar/public/profiles/dgu/themes/custom/dguk/default_images/default_user.png" width="60" height="60" alt=""/>
     </a>
+    <a py:if="comment['username'] == 'anonymous'" href="">
+        <img typeof="foaf:Image" src="http://data.gov.uk/sites/default/files/styles/avatar/public/profiles/dgu/themes/custom/dguk/default_images/default_user.png" width="60" height="60" alt=""/>
+    </a>
     <h3>${comment['subject']}</h3>
-    <span class="submitted">Posted by <a href="/users/${comment['username']}" title="View user profile." class="username" xml:lang="" about="/users/${comment['username']}" typeof="sioc:UserAccount" property="foaf:name" datatype="">${comment['username']}</a> on ${h.render_datetime(comment['creation_date'], with_hours=True)}
+    <span class="submitted">Posted by <a py:if="comment['username'] != 'anonymous'" href="/users/${comment['username']}" title="View user profile." class="username" xml:lang="" about="/users/${comment['username']}" typeof="sioc:UserAccount" property="foaf:name" datatype="">${comment['username']}</a><span py:if="comment['username'] == 'anonymous'">Anonymous</span> on ${h.render_datetime(comment['creation_date'], with_hours=True)}
     </span>
     <div class="reply-body">
         <div class="field field-name-field-reply-comment field-type-text-long field-label-hidden">
@@ -30,7 +33,7 @@
 
         <div style="border-top: solid 1px #ddd;">
             ${render_comment_reply_button(url, comment['id'])}
-            <a href="" title="" class="btn btn-mini flag flag-action flag-link-toggle pull-right" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Flag as offensive</a>
+            <a href="/dataset/${c.pkg.name}/comments/flag/${comment['id']}" title="" class="btn btn-mini flag flag-action flag-link-toggle pull-right" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Flag as offensive</a>
         </div>
     </div>
 
@@ -46,7 +49,11 @@
 
 <py:def function="show_comments(url)">
 <py:with vars="comments=h.get_comments_dict(url)['comments']">
-    <div id="new-comments-container"><div class="replies-wrapper">
+    <div id="new-comments-container">
+    <a href="/user?destination=dataset/${c.pkg.name}/comments/add" class="btn btn-primary btn-mini add-feedback-button pull-right">
+      Login to add a comment »
+    </a>
+    <div class="replies-wrapper">
       <a id="comments"></a> <!--Anchor to display nodes' comments.-->
 
             <py:for each="comment in comments">
