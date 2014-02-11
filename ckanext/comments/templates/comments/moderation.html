@@ -14,12 +14,19 @@
 
       <div class="panel panel-default">
           <div class="panel-heading">
+          Comments
           </div>
-          <div class="panel-body">
+          <div id='all' class="panel-body">
+              <p>
+                  This list contains all of the comments that have been flagged by users,
+                  or identified by the spam check as being inappropriate. You may process
+                  them one at a time or use the checkboxes on the left of the table to update
+                  in bulk.
+              </p>
               <a id="selectall" href="#">Select all</a> &nbsp;
               <a id="unselectall" href="#" style="display:none;">Unselect all</a> &nbsp;
-              <button class="btn btn-success">Publish selected</button>
-              <button class="btn btn-danger">Delete selected</button>
+              <button class="btn btn-success" disabled='true'>Publish selected</button>
+              <button class="btn btn-danger"  disabled='true'>Delete selected</button>
           </div>
       </div>
 
@@ -53,18 +60,21 @@
       $(document).ready(function(){
           $(":checkbox").change(function() {
               $(this).closest("tr").toggleClass("warning", this.checked);
+              $('#all button').prop('disabled', false);
           });
 
           $("#selectall").click(function(){
             $(":checkbox").prop('checked', true);
             $("tr:not(:first)").toggleClass("warning", true);
             $(this).hide();
+            $('#all button').prop('disabled', false);
             $('#unselectall').show()
           });
           $("#unselectall").click(function(){
             $(":checkbox").prop('checked', false);
             $("tr:not(:first)").toggleClass("warning", false);
             $(this).hide();
+            $('#all .btn').prop('disabled', true);
             $('#selectall').show()
           });
       });

@@ -35,6 +35,8 @@ def is_spam(content, author=None):
             params['authorMail'] = author.email
 
         cc = mollom_api.checkContent(**params)
+        if not cc:
+            raise Exception("None returned from Mollom call")
     except Exception, e:
         log.warning("Failed to perform a spam check with mollom")
         log.exception(e)
