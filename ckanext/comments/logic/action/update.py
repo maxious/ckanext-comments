@@ -18,9 +18,23 @@ def comment_update(context, data_dict):
     return {}
 
 def comment_update_moderation(context, data_dict):
+    import ckanext.comments.model as comment_model
+
     model = context['model']
     user = context['user']
 
+    cid = logic.get_or_bust(data_dict, 'id')
+    comment = comment_model.Comment.get(cid)
+    if not comment:
+        abort(404)
+
+    # TODO: If sysadmin, then remove from view.
+
+    if not comment.moderated_by:
+        comment.spam_votes = comment.spam_votes + 1
+        comment.approval_status = comment_model.COMMENT_PENDING
+        model.Session.add(comment)
+        model.Session.commit()
 
     return {}
 

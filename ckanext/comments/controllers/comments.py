@@ -19,6 +19,21 @@ log = logging.getLogger(__name__)
 
 class CommentController(BaseController):
 
+
+    def moderation(self):
+        context = {'model':model,'user': c.user}
+        check_access('moderation_queue_show', context)
+
+        try:
+            res = get_action('moderation_queue_show')(context, {})
+        except Exception, e:
+            abort(403)
+
+        c.comments = res.get('comments')
+
+        return render('comments/moderation.html')
+
+
     def add(self, dataset_name):
         c.action = 'add'
         return self._add_or_reply(dataset_name)
@@ -42,12 +57,12 @@ class CommentController(BaseController):
         try:
             c.pkg_dict = get_action('package_show')(context, {'id': dataset_name})
             c.pkg = context['package']
-        except:
+        except Exception, e:
             abort(403)
 
         try:
             get_action('comment_update_moderation')(context, {'id': id})
-        except:
+        except Exception, ee:
             abort(403)
 
         # Flag the package

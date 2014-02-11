@@ -1,0 +1,77 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+  xmlns:i18n="http://genshi.edgewall.org/i18n"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  py:strip="">
+
+  <py:def function="page_title">Moderation</py:def>
+
+  <py:match path="breadcrumbs">
+    <li><a href="${h.url_for(controller='ckanext.comments.controllers.comments:CommentController',action='moderation')}">Comment moderation</a></li>
+  </py:match>
+
+  <div py:match="content" class="group-edit-form">
+      <h3>Comment moderation</h3>
+
+      <div class="panel panel-default">
+          <div class="panel-heading">
+          </div>
+          <div class="panel-body">
+              <a id="selectall" href="#">Select all</a> &nbsp;
+              <a id="unselectall" href="#" style="display:none;">Unselect all</a> &nbsp;
+              <button class="btn btn-success">Publish selected</button>
+              <button class="btn btn-danger">Delete selected</button>
+          </div>
+      </div>
+
+      <table class="table table-bordered" style="table-layout:fixed">
+        <thead>
+          <tr>
+            <th  style="width: 30px;"></th>
+            <th>Author</th>
+            <th>Subject</th>
+            <th>Content</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <py:for each="comment in c.comments">
+            <tr>
+              <td style="width: 30px;"><input type="checkbox" value="${comment.id}"/></td>
+              <td>${comment.username}</td>
+              <td>${comment.subject}</td>
+              <td style="overflow-x:scroll">${Markup(comment.content)}</td>
+              <td>
+                  <button class="btn btn-success">Publish</button>
+                  <button class="btn btn-danger">Delete</button>
+              </td>
+            </tr>
+          </py:for>
+        </tbody>
+      </table>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+          $(":checkbox").change(function() {
+              $(this).closest("tr").toggleClass("warning", this.checked);
+          });
+
+          $("#selectall").click(function(){
+            $(":checkbox").prop('checked', true);
+            $("tr:not(:first)").toggleClass("warning", true);
+            $(this).hide();
+            $('#unselectall').show()
+          });
+          $("#unselectall").click(function(){
+            $(":checkbox").prop('checked', false);
+            $("tr:not(:first)").toggleClass("warning", false);
+            $(this).hide();
+            $('#selectall').show()
+          });
+      });
+    </script>
+
+  </div>
+
+  <xi:include href="../layout.html" />
+</html>
+

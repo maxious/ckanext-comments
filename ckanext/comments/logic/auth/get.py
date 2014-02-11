@@ -39,8 +39,8 @@ def moderation_queue_show(context, data_dict):
     model = context['model']
     user = context['user']
 
-    # Only if this user has the right to view the moderation queue,
-    # typically only sysadmins.
+    if new_authz.is_sysadmin(user):
+        return {'success': True}
 
     return {'success': False,
         'msg': _('You do not have permission to view the moderation queue')}

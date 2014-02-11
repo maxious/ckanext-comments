@@ -90,9 +90,17 @@ def comment_show(context, data_dict):
 
 
 def moderation_queue_show(context, data_dict):
+    from ckanext.comments.lib.spam_check import MOLLOM_HAM
     model = context['model']
     user = context['user']
 
     logic.check_access("moderation_queue_show", context, data_dict)
 
-    return {}
+    # We want all comments that are not already moderated and have
+    # spam score of MOLLOM_UNSURE or MOLLOM_SPAM.
+    comments = model.Session.query(comment_model.Comment).\
+        filter(comment_model.Comment.approval_status == comment_model.COMMENT_PENDING).\
+        filter(comment_model.Comment.moderated_by == None).\
+        order_by('comment.spam_votes desc')
+
+    return {'comments': [c.as_dict() for c in comments.all()]}

@@ -65,6 +65,8 @@ class CommentsPlugin(p.SingletonPlugin):
                     controller=controller, action='reply')
         map.connect('/dataset/{dataset_name}/comments/flag/{id}',
                     controller=controller, action='flag')
+        map.connect('/moderation/comments',
+                    controller=controller, action='moderation')
         return map
 
     def after_map(self, map):
