@@ -17,24 +17,23 @@ ckanext-comments has several configuration options that should be set to allow f
     # Whether, only a user's first comment must be moderated  (default: true)
     # otherwise ALL comments are moderated.
     ckan.comments.moderation.first_only = true/false
-    
+
     # Text for comments that have children and are deleted
     ckan.comments.deleted.text = This comment has been deleted
-    
- 
+
+    # For spam checking to work, the following two fields must be provided
+    mollom.public.key = The Mollom public key
+    mollom.private.key = The Mollom private key.
+
 
 ## Testing
 To run the tests you should run the following command in the ckanext-comments directory (or use --plugin=comments).
 
     nosetests --ckan --reset-db --with-pylons=test-core.ini ckanext.comments
- 
- 
- 
+
+
+
+
 ## TODO
 
- * Spam checking via mollom/akismet
  * Moderation queue
- * ~~~Move all of the logic into the logic layer~~~ 
- * Provide an 'anonymous' user for historical not-logged-in users that goes nowhere.
- * Make sure any provided JS makes the right API calls and handles threads properly
- 

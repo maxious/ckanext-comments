@@ -19,10 +19,12 @@ setup(
 	namespace_packages=['ckanext', 'ckanext.comments'],
 	include_package_data=True,
 	zip_safe=False,
+	dependency_links = ['https://github.com/datagovuk/mollom/tarball/xmlrpc#egg=mollom'],
 	install_requires=[
 		'requests',
 		'nose',
-		'nose-timer'
+		'nose-timer',
+		'mollom'
 	],
 	entry_points=\
 	"""

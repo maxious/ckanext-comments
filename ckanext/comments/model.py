@@ -125,7 +125,7 @@ class Comment(Base):
 
     spam_votes = Column(types.Integer, default=0)
     spam_score = Column(types.Integer, default=0)
-    spam_checked = Column(types.Integer, default=0)
+    spam_checked = Column(types.Boolean, default=False)
 
     state = Column(types.UnicodeText, default=u'active')
 

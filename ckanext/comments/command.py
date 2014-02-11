@@ -102,6 +102,7 @@ class XMLImport(CkanCommand):
         # "id","parent","dataset_name","status","entity_id","username","subject","comment","timestamp"
         import ckan.model as model
         import ckan.logic as logic
+        from ckanext.comments.lib.spam_check import MOLLOM_HAM
 
         obj = {
             'id': int(row[0].text),
@@ -122,6 +123,7 @@ class XMLImport(CkanCommand):
             # TODO: Setup an anonymous user.
             context['user'] = self.site_user_name
 
+        context['spam_score'] = MOLLOM_HAM
         context['creation_date'] = obj['timestamp']
 
         res = None
@@ -129,6 +131,7 @@ class XMLImport(CkanCommand):
             res = logic.get_action('comment_create')(context, data)
         except Exception, e:
             self.log.exception(e)
+            return
 
         self.old_ids[obj['id']] = res['id']
 

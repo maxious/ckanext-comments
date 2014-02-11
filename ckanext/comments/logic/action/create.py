@@ -14,6 +14,8 @@ from ckan.plugins import toolkit
 log = logging.getLogger(__name__)
 
 def comment_create(context, data_dict):
+    from ckanext.comments.lib.spam_check import is_spam
+
     model = context['model']
     user = context['user']
 
@@ -60,7 +62,7 @@ def comment_create(context, data_dict):
     if new_authz.is_sysadmin(user):
         cmt.approval_status = comment_model.COMMENT_APPROVED
         cmt.moderated_by = userobj.id
-        cmt.spam_checked = 1
+        cmt.spam_checked = True
     else:
         # If we want to force moderation of first comment from each user
         # otherwise it will be every comment.
@@ -75,9 +77,12 @@ def comment_create(context, data_dict):
     if toolkit.asbool(config.get('ckan.comments.threaded', False)):
         cmt.parent_id = data_dict.get('parent_id')
 
+    if context.get('spam_score'):
+        cmt.spam_checked, cmt.spam_score = True, context.get('spam_score')
+    else:
+        cmt.spam_checked, cmt.spam_score = is_spam(data_dict.get('comment'), userobj)
+
     model.Session.add(cmt)
     model.Session.commit()
-
-    # Enueue for spam checking if enabled
 
     return cmt.as_dict()
