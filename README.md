@@ -1,3 +1,6 @@
+```
+This extension is a work in progress
+```
 # ckanext-comments
 
 This [CKAN](http://ckan.org) extension allows you to add comments to
@@ -5,7 +8,6 @@ various things in CKAN (datasets, related items etc)so that users can,
 well, comment on things.
 
 ## Installation
-
 
 ## Configuration
 
