@@ -8,14 +8,30 @@ import json
 from ckan import model
 from paste.deploy.converters import asbool
 from ckan.lib.base import h, BaseController, abort
-from ckanext.dgu.plugins_toolkit import (render, c, request, _,
-                                         ObjectNotFound, NotAuthorized,
-                                         get_action, check_access)
 from ckan.lib.navl.dictization_functions import DataError, unflatten, validate
 from ckan.logic import tuplize_dict, clean_dict, parse_params, flatten_to_string_key, ValidationError
 
 log = logging.getLogger(__name__)
 
+import ckan.plugins.toolkit as t
+
+_ = t._
+c = t.c
+request = t.request
+render = t.render
+render_text = t.render_text
+asbool = t.asbool
+asint = t.asint
+aslist = t.aslist
+literal = t.literal
+
+get_action = t.get_action
+check_access = t.check_access
+ObjectNotFound = t.ObjectNotFound
+NotAuthorized = t.NotAuthorized
+ValidationError = t.ValidationError
+
+CkanCommand = t.CkanCommand
 
 class CommentController(BaseController):
 
@@ -79,7 +95,7 @@ class CommentController(BaseController):
         # Auth check to make sure the user can see this package
         ctx = context
         ctx['id'] = dataset_name
-        check_access('package_show', ctx)
+        check_access('package_show', ctx, {'id': dataset_name})
 
         try:
             c.pkg_dict = get_action('package_show')(context, {'id': dataset_name})

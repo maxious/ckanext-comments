@@ -1,0 +1,34 @@
+{% ckan_extends %}
+{% block package_additional_info %}
+{% snippet "package/snippets/additional_info.html", pkg_dict=pkg %}
+
+<h2>Comments</h2>
+
+{% if c.user %}
+<a href="/dataset/{{c.pkg.name}}/comments/add" class="btn btn-primary btn-mini add-feedback-button pull-right">
+    Add a comment »
+    {% else %}
+    <a href="/user?destination=/dataset/{{c.pkg.name}}/comments/add" class="btn btn-primary btn-mini add-feedback-button pull-right">
+        Login to add a comment »
+    {% endif %}
+
+</a><br/>
+
+{% for comment in h.get_comments_dict('/dataset/'+c.pkg.name)['comments'] %}
+
+{% if comment['state'] == 'active' %}
+    <a id="comment_"{{comment['id']}}"></a>
+<b>{{ comment['subject'] }}</b><br/>
+{{ comment['content'] }}
+    {% if c.user %}
+<a href="/dataset/{{c.pkg.name}}/comments/reply/{{comment['id']}}" class="btn btn-mini flag flag-action flag-link-toggle pull-right">Reply to this comment</a></br></br>
+<a href="/dataset/{{c.pkg.name}}/comments/flag/{{comment['id']}}" title="" class="btn btn-mini flag flag-action flag-link-toggle pull-right" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Flag as offensive</a>
+    {% else %}
+    <a href="/user?destination=/dataset/{{c.pkg.name}}/comments/reply/{{comment['id']}}" class="btn btn-mini flag flag-action flag-link-toggle pull-right">Login to reply to this comment</a></br></br>
+    <a href="/user?destination=/dataset/{{c.pkg.name}}/comments/flag/{{comment['id']}}" title="" class="btn btn-mini flag flag-action flag-link-toggle pull-right" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Login to flag as offensive</a>
+        {% endif %}
+<hr>
+{% endif %}
+{% endfor %}
+
+{% endblock %}

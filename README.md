@@ -8,7 +8,9 @@ various things in CKAN (datasets, related items etc)so that users can,
 well, comment on things.
 
 ## Installation
+Set up this extension's database tables using a paster command. (Ensure your CKAN pyenv is still activated, run the command from ``src/ckanext-comments``, alter the ``--config`` option to point to your site config file)::
 
+    $ paster initdb --config=../ckan/development.ini
 ## Configuration
 
 ckanext-comments has several configuration options that should be set to allow for your required behaviour
