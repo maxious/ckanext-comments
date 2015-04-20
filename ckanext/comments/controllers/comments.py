@@ -13,6 +13,7 @@ from ckan.lib.navl.dictization_functions import DataError, unflatten, validate
 from ckan.logic import tuplize_dict, clean_dict, parse_params, flatten_to_string_key, ValidationError
 from pylons import config
 
+import ckan.plugins.toolkit as tk
 import ckanext.comments.model as comment_model
 
 log = logging.getLogger(__name__)
@@ -84,6 +85,11 @@ class CommentController(BaseController):
 
         try:
             get_action('comment_update_moderation')(context, {'id': id})
+            email = config.get('ckan.comments.email', False)
+            if email:
+                message = 'A comment on the dataset "' + dataset_name + '" has been flagged as offensive / needing moderation. Please visit ' + h.url_for('/moderation/comments') + ' to approve or delete this comment'
+                mailer.mail_recipient('Site Administrator', config.get('ckan.comments.admin', 'root@localhost'), 'Dataset Comment Flagged for Moderation',
+                                      message)
         except Exception, ee:
             abort(403)
 
@@ -115,6 +121,11 @@ class CommentController(BaseController):
         h.flash_notice("Comment Deleted.")
         h.redirect_to('/moderation/comments')
 
+    def _get_org_full(self,id):
+        try:
+            return tk.get_action('organization_show')({'include_datasets': False},{'id': id})
+        except tk.ObjectNotFound:
+            return None
 
     def _add_or_reply(self, dataset_name):
         """
@@ -151,16 +162,19 @@ class CommentController(BaseController):
                 abort(403)
 
             if success:
-                email = False
+                email = config.get('ckan.comments.email', False)
                 if email:
-                    message = 'Comment on Dataset "' + c.pkg.title + '" \n Subject:' + res['subject'] + '\n' + res[
+                    message = 'There is a new comment on the dataset "' + c.pkg.title + '" \nSubject: ' + res['subject'] + '\n\n' + res[
                         'content']
-                    mailer.mail_recipient('site admin', config.get('ckan.comments.threaded', False), 'Dataset Comment',
+                    mailer.mail_recipient('Site Administrator', config.get('ckan.comments.admin', 'root@localhost'), 'Dataset Comment',
                                           message)
-                    if c.pkg.organization.contact_email:
-                        mailer.mail_recipient('org admin', c.pkg.organization.contact_email, 'Dataset Comment', message)
-                    if c.pkg.contact_point and c.pkg.contact_point != c.pkg.organization.contact_email:
-                        mailer.mail_recipient('contact if not org admin', c.pkg.contact_point, 'Dataset Comment', message)
+
+                    org_full = self._get_org_full(c.pkg_dict['organization']['id'])
+                    org_email = h.get_pkg_dict_extra(org_full,'email')
+                    if org_email:
+                        mailer.mail_recipient('Organisation Administrator', org_email, 'Dataset Comment', message)
+                    if 'contact_point' in c.pkg_dict and (not org_email or c.pkg_dict['contact_point'] != org_email):
+                        mailer.mail_recipient('Dataset Contact Point', c.pkg_dict['contact_point'], 'Dataset Comment', message)
                 h.redirect_to(str('/dataset/%s#comment_%s' % (c.pkg.name, res['id'])))
 
         vars = {'errors': errors}

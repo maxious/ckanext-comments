@@ -14,6 +14,8 @@ Set up this extension's database tables using a paster command. (Ensure your CKA
 ## Configuration
 
 ckanext-comments has several configuration options that should be set to allow for your required behaviour
+    # enable email notifications of new/flagged comments
+    ckan.comments.email = True
     # comment administrator to get emails
     ckan.comments.admin = admin@example.com
     # Whether comments should be threaded or not (default: false)

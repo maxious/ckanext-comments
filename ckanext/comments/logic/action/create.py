@@ -61,7 +61,6 @@ def comment_create(context, data_dict):
             cmt.parent_id = parent.id
 
     # Sysadmins get auto-approve, auto-moderate.
-    # Sysadmins get auto-approve, auto-moderate.
     if new_authz.is_sysadmin(user):
         cmt.approval_status = comment_model.COMMENT_APPROVED
         cmt.moderated_by = userobj.id
