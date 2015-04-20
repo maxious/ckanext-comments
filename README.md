@@ -14,7 +14,8 @@ Set up this extension's database tables using a paster command. (Ensure your CKA
 ## Configuration
 
 ckanext-comments has several configuration options that should be set to allow for your required behaviour
-
+    # comment administrator to get emails
+    ckan.comments.admin = admin@example.com
     # Whether comments should be threaded or not (default: false)
     ckan.comments.threaded = true/false
 

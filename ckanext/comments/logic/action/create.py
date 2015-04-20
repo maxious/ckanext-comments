@@ -10,8 +10,10 @@ import ckan.new_authz as new_authz
 import ckan.lib.helpers as h
 from ckan.lib.base import abort, c
 from ckan.plugins import toolkit
+import html2text
 
 log = logging.getLogger(__name__)
+h2t = html2text.HTML2Text()
 
 def comment_create(context, data_dict):
     from ckanext.comments.lib.spam_check import is_spam
@@ -38,7 +40,7 @@ def comment_create(context, data_dict):
         raise logic.ValidationError("Thread identifier or URL is required")
 
     # Cleanup the comment
-    cleaned_comment = util.clean_input(data_dict.get('comment'))
+    cleaned_comment = h2t.handle(util.clean_input(data_dict.get('comment')))
 
     # Create the object
     cmt = comment_model.Comment(thread_id=thread_id,
@@ -59,9 +61,11 @@ def comment_create(context, data_dict):
             cmt.parent_id = parent.id
 
     # Sysadmins get auto-approve, auto-moderate.
+    # Sysadmins get auto-approve, auto-moderate.
     if new_authz.is_sysadmin(user):
         cmt.approval_status = comment_model.COMMENT_APPROVED
         cmt.moderated_by = userobj.id
+        cmt.moderation_date = datetime.datetime.now()
         cmt.spam_checked = True
     else:
         # If we want to force moderation of first comment from each user

@@ -35,6 +35,7 @@ class CommentsPlugin(p.SingletonPlugin):
             "comment_delete": actions.delete.comment_delete,
             "comment_show": actions.get.comment_show,
             "comment_update": actions.update.comment_update,
+            "comment_update_approve": actions.update.comment_update_approve,
             'comment_update_moderation': actions.update.comment_update_moderation,
             "thread_show": actions.get.thread_show,
             "moderation_queue_show": actions.get.moderation_queue_show,
@@ -65,6 +66,10 @@ class CommentsPlugin(p.SingletonPlugin):
                     controller=controller, action='reply')
         map.connect('/dataset/{dataset_name}/comments/flag/{id}',
                     controller=controller, action='flag')
+        map.connect('/comments/approve/{id}',
+                    controller=controller, action='approve')
+        map.connect('/comments/delete/{id}',
+                    controller=controller, action='delete')
         map.connect('/moderation/comments',
                     controller=controller, action='moderation')
         return map

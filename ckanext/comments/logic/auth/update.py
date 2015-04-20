@@ -23,6 +23,7 @@ def comment_update(context, data_dict):
 
     return {'success': False, 'msg': _('You do not have permission to update this comment')}
 
+
 def moderation_queue_update(context, data_dict):
     model = context['model']
     user = context['user']

@@ -15,17 +15,19 @@
 {% endblock %}
 
 {% block primary_content %}
+<article class="module">
+    <div class="module-content">
+<fieldset>
 
-    <div class="boxed">
         {% if c.action == 'add'%}
-        <h3>New comment</h3>
+    <legend>New comment</legend>
         {% endif %}
         {% if c.action == 'reply'%}
-        <h3>Reply to '{{c.parent.subject}}'</h3>
+    <legend>Reply to '{{c.parent.subject}}'</legend>
         {% endif %}
-
-      {{c.form}}
-    </div>
-
+            {{c.form}}
+    </fieldset>
+</div>
+    </article>
 
 {% endblock %}

@@ -9,17 +9,16 @@
 
 
 
-<div class="panel panel-danger errors" py:if="errors">
-  <div class="panel-heading">Error</div>
-  <div class="panel-body">
-    <p>There are errors in the form, please correct them before re-submitting.</p>
-    <ul>
-        <py:for each="k,v in errors.iteritems()">
-          <li>${v}</li>
-        </py:for>
-    </ul>
-  </div>
-</div>
+    <div class="error-explanation alert alert-error " py:if="errors">
+        <p>The form contains invalid entries:</p>
+        <ul>
+            <py:for each="k,v in errors.iteritems()">
+                <li data-field-label="${k}">${v}</li>
+            </py:for>
+
+        </ul>
+    </div>
+
 
 <div py:if="c.parent_dict">
     <span class="submitted">Posted by <a py:if="c.parent_dict['username'] != 'anonymous'" href="/users/${c.parent_dict['username']}" title="View user profile." class="username" xml:lang="" about="/users/${c.parent_dict['username']}" typeof="sioc:UserAccount" property="foaf:name" datatype="">${c.parent_dict['username']}</a><span py:if="c.parent_dict['username'] == 'anonymous'">Anonymous</span> on ${h.render_datetime(c.parent_dict['creation_date'], with_hours=True)}
@@ -36,11 +35,19 @@
 
 <form class="form" action="" method="POST">
   <div class="form-controls">
-    <label for="subject">Subject</label>
-    <input type="text" class="form-control" name="subject"/>
+      <div class="control-group control-full">
+          <label class="control-label" for="field-subject">Subject</label>
+          <div class="controls ">
+              <input id="field-subject" type="text" name="subject" value="" placeholder=""/>
+          </div>
+      </div>
 
-    <label for="comment">Comment</label>
-    <textarea name="comment" class="form-control" rows="10"></textarea>
+      <div class="control-group control-full">
+          <label class="control-label" for="field-comment"><span title="This field is required" class="control-required">*</span> Comment</label>
+          <div class="controls editor">
+              <textarea id="field-comment" name="comment" cols="18" rows="5" placeholder=""></textarea>
+          </div>
+      </div>
   </div>
   <div class="form-actions">
     <input type="submit" class="btn btn-primary" value="Save"/>

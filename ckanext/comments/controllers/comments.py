@@ -7,9 +7,13 @@ import logging
 import json
 from ckan import model
 from paste.deploy.converters import asbool
+from ckan.lib import mailer
 from ckan.lib.base import h, BaseController, abort
 from ckan.lib.navl.dictization_functions import DataError, unflatten, validate
 from ckan.logic import tuplize_dict, clean_dict, parse_params, flatten_to_string_key, ValidationError
+from pylons import config
+
+import ckanext.comments.model as comment_model
 
 log = logging.getLogger(__name__)
 
@@ -33,11 +37,10 @@ ValidationError = t.ValidationError
 
 CkanCommand = t.CkanCommand
 
+
 class CommentController(BaseController):
-
-
     def moderation(self):
-        context = {'model':model,'user': c.user}
+        context = {'model': model, 'user': c.user}
         check_access('moderation_queue_show', context)
 
         try:
@@ -46,6 +49,9 @@ class CommentController(BaseController):
             abort(403)
 
         c.comments = res.get('comments')
+        for comment in c.comments:
+            comment['thread'] = comment_model.CommentThread.get(comment['thread_id'])
+            comment['dataset'] = model.Package.get(comment['thread'].url.replace('/dataset/',''))
 
         return render('comments/moderation.html')
 
@@ -60,7 +66,7 @@ class CommentController(BaseController):
         try:
             data = {'id': parent_id}
             c.parent_dict = get_action("comment_show")({'model': model, 'user': c.user},
-                data)
+                                                       data)
             c.parent = data['comment']
         except:
             abort(404)
@@ -68,7 +74,7 @@ class CommentController(BaseController):
         return self._add_or_reply(dataset_name)
 
     def flag(self, dataset_name, id):
-        context = {'model':model,'user': c.user}
+        context = {'model': model, 'user': c.user}
 
         try:
             c.pkg_dict = get_action('package_show')(context, {'id': dataset_name})
@@ -85,12 +91,36 @@ class CommentController(BaseController):
         h.flash_notice("Thank you for flagging the comment as inappropriate. It has been marked for moderation.")
         h.redirect_to(str('/dataset/%s' % (c.pkg.name,)))
 
+    def approve(self, id):
+        context = {'model': model, 'user': c.user}
+        try:
+            check_access('comment_update', context, {'id': id})
+            get_action('comment_update_approve')(context, {'id': id})
+        except Exception, ee:
+            abort(403)
+
+        # Flag the package
+        h.flash_notice("Comment Approved.")
+        h.redirect_to('/moderation/comments')
+
+    def delete(self, id):
+        context = {'model': model, 'user': c.user}
+
+        try:
+            get_action('comment_update_moderation')(context, {'id': id})
+        except Exception, ee:
+            abort(403)
+
+        # Flag the package
+        h.flash_notice("Comment Deleted.")
+        h.redirect_to('/moderation/comments')
+
 
     def _add_or_reply(self, dataset_name):
         """
         Allows the user to add a comment to an existing dataset
         """
-        context = {'model':model,'user': c.user}
+        context = {'model': model, 'user': c.user}
 
         # Auth check to make sure the user can see this package
         ctx = context
@@ -121,6 +151,16 @@ class CommentController(BaseController):
                 abort(403)
 
             if success:
+                email = False
+                if email:
+                    message = 'Comment on Dataset "' + c.pkg.title + '" \n Subject:' + res['subject'] + '\n' + res[
+                        'content']
+                    mailer.mail_recipient('site admin', config.get('ckan.comments.threaded', False), 'Dataset Comment',
+                                          message)
+                    if c.pkg.organization.contact_email:
+                        mailer.mail_recipient('org admin', c.pkg.organization.contact_email, 'Dataset Comment', message)
+                    if c.pkg.contact_point and c.pkg.contact_point != c.pkg.organization.contact_email:
+                        mailer.mail_recipient('contact if not org admin', c.pkg.contact_point, 'Dataset Comment', message)
                 h.redirect_to(str('/dataset/%s#comment_%s' % (c.pkg.name, res['id'])))
 
         vars = {'errors': errors}

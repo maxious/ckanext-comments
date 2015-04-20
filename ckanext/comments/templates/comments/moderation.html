@@ -20,40 +20,40 @@
                   them one at a time or use the checkboxes on the left of the table to update
                   in bulk.
               </p>
-              <a id="selectall" href="#">Select all</a> &nbsp;
+              <!--<a id="selectall" href="#">Select all</a> &nbsp;
               <a id="unselectall" href="#" style="display:none;">Unselect all</a> &nbsp;
               <button class="btn btn-success" disabled='true'>Publish selected</button>
-              <button class="btn btn-danger"  disabled='true'>Delete selected</button>
+              <button class="btn btn-danger"  disabled='true'>Delete selected</button> -->
           </div>
       </div>
 
       <table class="table table-bordered" style="table-layout:fixed">
         <thead>
           <tr>
-            <th  style="width: 30px;"></th>
+            <!--<th  style="width: 30px;"></th>-->
             <th>Author</th>
-            <th>Subject</th>
-            <th>Content</th>
+            <th>Comment</th>
+            <th>Dataset</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for comment in c.comments %}
             <tr>
-              <td style="width: 30px;"><input type="checkbox" value="{{comment.id}}"/></td>
+              <!--<td style="width: 30px;"><input type="checkbox" value="{{comment.id}}"/></td> -->
               <td>{{comment.username}}</td>
-              <td>{{comment.subject}}</td>
-              <td style="overflow-x:scroll">{{comment.content}}</td>
+              <td style="overflow-x:scroll"><b>{{comment.subject}}</b><br/>{{comment.content}}</td>
+              <td><a href="{{comment.thread.url}}">{{comment.dataset.title}}</a></td>
               <td>
-                  <button class="btn btn-success">Publish</button>
-                  <button class="btn btn-danger">Delete</button>
+                  <a href="/comments/approve/{{comment['id']}}" class="btn btn-success">Publish</a>
+                  <a href="/comments/delete/{{comment['id']}}" class="btn btn-danger">Delete</a>
               </td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
 
-    <script type="text/javascript">
+    <!--<script type="text/javascript">
       $(document).ready(function(){
           $(":checkbox").change(function() {
               $(this).closest("tr").toggleClass("warning", this.checked);
@@ -75,7 +75,7 @@
             $('#selectall').show()
           });
       });
-    </script>
+    </script> -->
 
   </div>
 

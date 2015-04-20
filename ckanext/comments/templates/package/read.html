@@ -16,9 +16,10 @@
 
 {% for comment in h.get_comments_dict('/dataset/'+c.pkg.name)['comments'] %}
 
-{% if comment['state'] == 'active' %}
     <a id="comment_"{{comment['id']}}"></a>
 <b>{{ comment['subject'] }}</b><br/>
+<small class="submitted">Posted by <a href="/users/{{comment['user_id']}}" title="View user profile." class="username" xml:lang="" about="/users/{{comment['user_id']}}" typeof="sioc:UserAccount" property="foaf:name" datatype="">{{comment['username']}}</a> on {{h.render_datetime(comment['creation_date'], with_hours=True)}}
+    </small><br/>
 {{ comment['content'] }}
     {% if c.user %}
 <a href="/dataset/{{c.pkg.name}}/comments/reply/{{comment['id']}}" class="btn btn-mini flag flag-action flag-link-toggle pull-right">Reply to this comment</a></br></br>
@@ -28,7 +29,6 @@
     <a href="/user?destination=/dataset/{{c.pkg.name}}/comments/flag/{{comment['id']}}" title="" class="btn btn-mini flag flag-action flag-link-toggle pull-right" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Login to flag as offensive</a>
         {% endif %}
 <hr>
-{% endif %}
 {% endfor %}
 
 {% endblock %}
