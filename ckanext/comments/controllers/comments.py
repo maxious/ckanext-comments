@@ -151,7 +151,7 @@ class CommentController(BaseController):
                 tuplize_dict(parse_params(request.POST))))
             data_dict['parent_id'] = c.parent.id if c.parent else None
             data_dict['url'] = '/dataset/%s' % c.pkg.name
-
+            data_dict['comment'] = data_dict['comment'][:5000]
             success = False
             try:
                 res = get_action('comment_create')(context, data_dict)
