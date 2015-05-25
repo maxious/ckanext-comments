@@ -8,7 +8,7 @@
 <a href="/dataset/{{c.pkg.name}}/comments/add" class="btn btn-primary btn-mini add-feedback-button pull-right">
     Add a comment »
     {% else %}
-    <a href="/user/login?came_from=/dataset/{{c.pkg.name}}/comments/add" class="btn btn-primary btn-mini add-feedback-button pull-right">
+    <a href="{{h.url_for(controller='user', action='login')}}?came_from=/dataset/{{c.pkg.name}}/comments/add" class="btn btn-primary btn-mini add-feedback-button pull-right">
         Login to add a comment »
     {% endif %}
 
@@ -16,17 +16,18 @@
 
 {% for comment in h.get_comments_dict('/dataset/'+c.pkg.name)['comments'] %}
 
-    <a id="comment_"{{comment['id']}}"></a>
+    <a id="comment_{{comment['id']}}"></a>
 <b>{{ comment['subject'] }}</b><br/>
-<small class="submitted">Posted by <a href="/users/{{comment['user_id']}}" title="View user profile." class="username" xml:lang="" about="/users/{{comment['user_id']}}" typeof="sioc:UserAccount" property="foaf:name" datatype="">{{comment['username']}}</a> on {{h.render_datetime(comment['creation_date'], with_hours=True)}}
+<small class="submitted">Posted by <a href="{{h.user_for(controlled='user', action='read', id=comment['user_id'])}}" title="View user profile." 
+class="username" xml:lang="" about="{{h.user_for(controlled='user', action='read', id=comment['user_id'])}}" typeof="sioc:UserAccount" property="foaf:name" datatype="">{{comment['username']}}</a> on {{h.render_datetime(comment['creation_date'], with_hours=True)}}
     </small><br/>
 {{ comment['content'] }}
     {% if c.user %}
-<a href="/dataset/{{c.pkg.name}}/comments/reply/{{comment['id']}}" class="btn btn-mini flag flag-action flag-link-toggle pull-right">Reply to this comment</a></br></br>
-<a href="/dataset/{{c.pkg.name}}/comments/flag/{{comment['id']}}" title="" class="btn btn-mini flag flag-action flag-link-toggle pull-right" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Flag as offensive</a>
+<a href="{{h.url_for(controller='package', action='read',id=c.pkg.name)}}/comments/reply/{{comment['id']}}" class="btn btn-mini flag flag-action flag-link-toggle pull-right">Reply to this comment</a></br></br>
+<a href="{{h.url_for(controller='package', action='read',id=c.pkg.name)}}/comments/flag/{{comment['id']}}" title="" class="btn btn-mini flag flag-action flag-link-toggle pull-right" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Flag as offensive</a>
     {% else %}
-    <a href="/user/login?came_from=/dataset/{{c.pkg.name}}/comments/reply/{{comment['id']}}" class="btn btn-mini flag flag-action flag-link-toggle pull-right">Login to reply to this comment</a></br></br>
-    <a href="/user/login?came_from=/dataset/{{c.pkg.name}}/comments/flag/{{comment['id']}}" title="" class="btn btn-mini flag flag-action flag-link-toggle pull-right" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Login to flag as offensive</a>
+    <a href="{{h.url_for(controller='user', action='login')}}?came_from=/dataset/{{c.pkg.name}}/comments/reply/{{comment['id']}}" class="btn btn-mini flag flag-action flag-link-toggle pull-right">Login to reply to this comment</a></br></br>
+    <a href="{{h.url_for(controller='user', action='login')}}?came_from=/dataset/{{c.pkg.name}}/comments/flag/{{comment['id']}}" title="" class="btn btn-mini flag flag-action flag-link-toggle pull-right" rel="nofollow"> <i class="icon-exclamation-sign"></i> &nbsp;Login to flag as offensive</a>
         {% endif %}
 <hr>
 {% endfor %}
