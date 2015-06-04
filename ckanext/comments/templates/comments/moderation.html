@@ -45,8 +45,8 @@
               <td style="overflow-x:scroll"><b>{{comment.subject}}</b><br/>{{comment.content}}</td>
               <td><a href="{{comment.thread.url}}">{{comment.dataset.title}}</a></td>
               <td>
-                  <a href="/comments/approve/{{comment['id']}}" class="btn btn-success">Publish</a>
-                  <a href="/comments/delete/{{comment['id']}}" class="btn btn-danger">Delete</a>
+                  <a href="{{h.url_for(controller='ckanext.comments.controllers.comments:CommentController',action='approve')}}/comments/approve/{{comment['id']}}" class="btn btn-success">Publish</a>
+                  <a href="{{h.url_for(controller='ckanext.comments.controllers.comments:CommentController',action='delete')}}/comments/delete/{{comment['id']}}" class="btn btn-danger">Delete</a>
               </td>
             </tr>
           {% endfor %}

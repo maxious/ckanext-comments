@@ -67,11 +67,12 @@ def comment_create(context, data_dict):
         cmt.moderation_date = datetime.datetime.now()
         cmt.spam_checked = True
     else:
-        # If we want to force moderation of first comment from each user
-        # otherwise it will be every comment.
-        cmt.approval_status = comment_model.COMMENT_PENDING
+        # If we want, we can force moderation of first comment from each user
+        # otherwise approve every comment.
+        cmt.approval_status = comment_model.COMMENT_APPROVED
 
         if toolkit.asbool(config.get('ckan.comments.moderation.first_only')):
+            cmt.approval_status = comment_model.COMMENT_PENDING
             if comment_model.Comment.count_for_user(user) != 0:
                 cmt.approval_status = comment_model.COMMENT_APPROVED
 
