@@ -42,12 +42,11 @@ CkanCommand = t.CkanCommand
 class CommentController(BaseController):
     def moderation(self):
         context = {'model': model, 'user': c.user}
-        check_access('moderation_queue_show', context)
-
         try:
+            check_access('moderation_queue_show', context)
             res = get_action('moderation_queue_show')(context, {})
         except Exception, e:
-            abort(403)
+            abort(401, _('Unauthorized'))
 
         c.comments = res.get('comments')
         for comment in c.comments:
@@ -81,7 +80,7 @@ class CommentController(BaseController):
             c.pkg_dict = get_action('package_show')(context, {'id': dataset_name})
             c.pkg = context['package']
         except Exception, e:
-            abort(403)
+            abort(401, _('Unauthorized'))
 
         try:
             get_action('comment_update_moderation')(context, {'id': id})
@@ -91,7 +90,7 @@ class CommentController(BaseController):
                 mailer.mail_recipient('Site Administrator', config.get('ckan.comments.admin', 'root@localhost'), 'Dataset Comment Flagged for Moderation',
                                       message)
         except Exception, ee:
-            abort(403)
+            abort(401, _('Unauthorized'))
 
         # Flag the package
         h.flash_notice("Thank you for flagging the comment as inappropriate. It has been marked for moderation.")
@@ -103,7 +102,7 @@ class CommentController(BaseController):
             check_access('comment_update', context, {'id': id})
             get_action('comment_update_approve')(context, {'id': id})
         except Exception, ee:
-            abort(403)
+            abort(401, _('Unauthorized'))
 
         # Flag the package
         h.flash_notice("Comment Approved.")
@@ -115,7 +114,7 @@ class CommentController(BaseController):
         try:
             get_action('comment_update_moderation')(context, {'id': id})
         except Exception, ee:
-            abort(403)
+            abort(401, _('Unauthorized'))
 
         # Flag the package
         h.flash_notice("Comment Deleted.")
@@ -142,8 +141,9 @@ class CommentController(BaseController):
             c.pkg_dict = get_action('package_show')(context, {'id': dataset_name})
             c.pkg = context['package']
         except:
-            abort(403)
-
+            abort(401, _('Unauthorized'))
+        if not c.user:
+            abort(401, _('Unauthorized'))
         errors = {}
 
         if request.method == 'POST':
@@ -159,7 +159,8 @@ class CommentController(BaseController):
             except ValidationError, ve:
                 errors = ve.error_dict
             except Exception, e:
-                abort(403)
+
+                abort(401, _('Unauthorized'))
 
             if success:
                 email = config.get('ckan.comments.email', False)
